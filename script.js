@@ -135,37 +135,51 @@ document.addEventListener('DOMContentLoaded', () => {
         typing.textContent = 'Analyzing bill...';
         aiChatBody.appendChild(typing);
 
-        if (typeof AI_CONFIG !== 'undefined' && AI_CONFIG.isLive) {
+        const config = window.AI_CONFIG;
+
+        if (config && config.isLive && config.apiKey && config.apiKey !== 'YOUR_API_KEY_HERE') {
             try {
                 let response;
                 // DETECT GOOGLE (GEMINI) VS OPENAI
-                if (AI_CONFIG.apiKey.startsWith('AIza')) {
-                    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${AI_CONFIG.apiKey}`;
+                if (config.apiKey.startsWith('AIza')) {
+                    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${config.apiKey}`;
                     response = await fetch(geminiUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             contents: [{
                                 parts: [{
-                                    text: `You are an expert on the Kenya Finance Bill. 
-                                    Use the following context as your Source of Truth. 
-                                    CONTEXT: ${FINANCE_BILL_CONTEXT}
+                                    text: `ROLE: You are the Senior Fiscal Analyst for the Finance Bill Review Portal. 
+                                    PERSONALITY: Professional, authoritative, non-partisan, and concise.
+                                    SOURCE MATERIAL: ${FINANCE_BILL_CONTEXT}
                                     
-                                    USER QUESTION: ${text}`
+                                    TASK: Answer the following user question based ONLY on the source material provided. If the information is not present, explain that you are analyzing the official Gazette Supplements for that specific detail.
+                                    
+                                    USER INQUIRY: ${text}`
                                 }]
                             }]
                         })
                     });
+                    
+                    if (!response.ok) throw new Error(`API returned ${response.status}`);
+                    
                     const data = await response.json();
-                    typing.remove();
-                    addMessage(data.candidates[0].content.parts[0].text, 'bot');
+                    
+                    if (data.error) throw new Error(data.error.message);
+                    
+                    if (data.candidates && data.candidates[0]) {
+                        typing.remove();
+                        addMessage(data.candidates[0].content.parts[0].text, 'bot');
+                    } else {
+                        throw new Error("No response from AI");
+                    }
                 } else {
                     // OPENAI COMPATIBLE
-                    response = await fetch(AI_CONFIG.endpoint, {
+                    response = await fetch(config.endpoint, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${AI_CONFIG.apiKey}`
+                            'Authorization': `Bearer ${config.apiKey}`
                         },
                         body: JSON.stringify({
                             model: "gpt-4",
@@ -179,6 +193,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             ]
                         })
                     });
+                    
+                    if (!response.ok) throw new Error(`API returned ${response.status}`);
+                    
                     const data = await response.json();
                     typing.remove();
                     addMessage(data.choices[0].message.content, 'bot');
@@ -186,8 +203,8 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error("AI Error:", error);
                 typing.remove();
-                addMessage("I'm having trouble reaching the live intelligence engine. Reverting to local analysis...", 'bot');
-                setTimeout(() => simulateResponse(text), 1000);
+                addMessage(`Live Intelligence Error: ${error.message}. Attempting local analysis...`, 'bot');
+                setTimeout(() => simulateResponse(text), 1500);
             }
         } else {
             // Simulated Response (Fallback)

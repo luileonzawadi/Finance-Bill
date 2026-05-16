@@ -265,6 +265,21 @@ nav {
     color: white;
 }
 
+.btn.text-link {
+    background: transparent;
+    color: var(--black);
+    padding: 0.8rem 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+}
+
+.btn.text-link:hover {
+    color: var(--red);
+    transform: translateX(5px);
+}
+
 .hero-image {
     position: relative;
 }
@@ -1278,6 +1293,94 @@ footer::before {
     .metric-card {
         max-width: 500px;
         margin: 0 auto;
+    }
+}
+
+/* Download Section */
+.download-section {
+    padding: 100px 0;
+    background: rgba(248, 250, 252, 0.5);
+}
+
+.download-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
+    margin-top: 4rem;
+}
+
+.download-card {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    padding: 2.5rem;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    transition: var(--transition);
+}
+
+.download-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow);
+    border-color: var(--red);
+}
+
+.doc-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(198, 0, 0, 0.1);
+    color: var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    font-size: 1.8rem;
+}
+
+.doc-info {
+    flex: 1;
+}
+
+.doc-info h4 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.doc-info p {
+    font-size: 0.9rem;
+    opacity: 0.6;
+}
+
+.download-btn {
+    padding: 0.8rem 1.5rem;
+    background: var(--black);
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: var(--transition);
+}
+
+.download-btn:hover {
+    background: var(--red);
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .download-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .download-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 2rem;
     }
 }
 
