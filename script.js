@@ -137,34 +137,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (typeof AI_CONFIG !== 'undefined' && AI_CONFIG.isLive) {
             try {
-                // REAL API CALL WITH GROUNDING
-                const response = await fetch(AI_CONFIG.endpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${AI_CONFIG.apiKey}`
-                    },
-                    body: JSON.stringify({
-                        model: "gpt-4",
-                        messages: [
-                            { 
-                                role: "system", 
-                                content: `You are an expert on the Kenya Finance Bill 2026. 
-                                Use the following official context as your Source of Truth to answer user questions. 
-                                If the information is not in this context, state that you are analyzing the official documents. 
-                                DO NOT HALLUCINATE.
-                                
-                                CONTEXT:
-                                ${FINANCE_BILL_CONTEXT}` 
-                            },
-                            { role: "user", content: text }
-                        ]
-                    })
-                });
-                const data = await response.json();
-                typing.remove();
-                addMessage(data.choices[0].message.content, 'bot');
+                let response;
+                // DETECT GOOGLE (GEMINI) VS OPENAI
+                if (AI_CONFIG.apiKey.startsWith('AIza')) {
+                    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${AI_CONFIG.apiKey}`;
+                    response = await fetch(geminiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{
+                                    text: `You are an expert on the Kenya Finance Bill. 
+                                    Use the following context as your Source of Truth. 
+                                    CONTEXT: ${FINANCE_BILL_CONTEXT}
+                                    
+                                    USER QUESTION: ${text}`
+                                }]
+                            }]
+                        })
+                    });
+                    const data = await response.json();
+                    typing.remove();
+                    addMessage(data.candidates[0].content.parts[0].text, 'bot');
+                } else {
+                    // OPENAI COMPATIBLE
+                    response = await fetch(AI_CONFIG.endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${AI_CONFIG.apiKey}`
+                        },
+                        body: JSON.stringify({
+                            model: "gpt-4",
+                            messages: [
+                                { 
+                                    role: "system", 
+                                    content: `You are an expert on the Kenya Finance Bill. 
+                                    CONTEXT: ${FINANCE_BILL_CONTEXT}` 
+                                },
+                                { role: "user", content: text }
+                            ]
+                        })
+                    });
+                    const data = await response.json();
+                    typing.remove();
+                    addMessage(data.choices[0].message.content, 'bot');
+                }
             } catch (error) {
+                console.error("AI Error:", error);
                 typing.remove();
                 addMessage("I'm having trouble reaching the live intelligence engine. Reverting to local analysis...", 'bot');
                 setTimeout(() => simulateResponse(text), 1000);
