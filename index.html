@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Bill Review | Kenya's Path Forward</title>
+    <meta name="description" content="A comprehensive review and analysis of the Finance Bill. Understand the tax changes, budget implications, and economic impact.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            // Initializing EmailJS with a placeholder. The user should replace this with their actual Public Key.
+            emailjs.init("YOUR_PUBLIC_KEY");
+        })();
+    </script>
+</head>
+<body>
+    <div id="scroll-progress"></div>
+    <div class="national-spirals">
+        <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke-width="2" stroke-linecap="round">
+                <!-- Black Spirals -->
+                <path class="spiral s-black" d="M400,400 c10,0 20,10 20,20 c0,20 -30,30 -50,30 c-40,0 -60,-50 -60,-90 c0,-70 70,-110 130,-110 c100,0 160,90 160,180 c0,130 -120,220 -240,220 c-170,0 -290,-150 -290,-310 c0,-210 200,-370 410,-370" />
+                <!-- Red Spirals -->
+                <path class="spiral s-red" d="M400,400 c0,10 10,20 20,20 c20,0 30,-30 30,-50 c0,-40 -50,-60 -90,-60 c-70,0 -110,70 -110,130 c0,100 90,160 180,160 c130,0 220,-120 220,-240 c0,-170 -150,-290 -310,-290 c-210,0 -370,200 -370,410" />
+                <!-- Green Spirals -->
+                <path class="spiral s-green" d="M400,400 c-10,0 -20,-10 -20,-20 c0,-20 30,-30 50,-30 c40,0 60,50 60,90 c0,70 -70,110 -130,110 c-100,0 -160,-90 -160,-180 c0,-130 120,-220 240,-220 c170,0 290,150 290,310 c0,210 -200,370 -410,370" />
+            </g>
+        </svg>
+    </div>
+    <header id="navbar">
+        <nav class="container">
+            <div class="logo">
+                <div class="logo-shield">
+                    <span class="stripe black"></span>
+                    <span class="stripe red"></span>
+                    <span class="stripe green"></span>
+                </div>
+                <div class="logo-text">FINANCE BILL <span>2026</span></div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#analysis">Analysis</a></li>
+                <li><a href="#comparison">Comparison</a></li>
+                <li><a href="#impact">Key Impacts</a></li>
+                <li><a href="#feedback">Contact</a></li>
+            </ul>
+            <button class="cta-btn">Download PDF</button>
+            <div class="menu-toggle" id="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="container hero-content">
+                <div class="hero-text">
+                    <span class="badge">National Review 2026</span>
+                    <h1>Understanding <span>The Finance Bill</span></h1>
+                    <p>Breaking down complex fiscal policies into actionable insights for every citizen. Join the conversation and understand how the proposed changes affect you.</p>
+                    <div class="hero-actions">
+                        <a href="#analysis" class="btn primary">Start Review</a>
+                        <a href="#impact" class="btn secondary">View Impact</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1590424753858-394a281ce99a?q=80&w=2070&auto=format&fit=crop" alt="Kenya Finance Bill Analysis" id="hero-img">
+                        <div class="glass-card">
+                            <div class="stat">
+                                <span class="number">15+</span>
+                                <span class="label">Tax Year</span>
+                            </div>
+                            <div class="stat">
+                                <span class="number">2026</span>
+                                <span class="label">Review Year</span>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="analysis" class="highlights">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Key <span>Highlights</span></h2>
+                    <p>A summary of the most significant changes proposed in the current bill.</p>
+                </div>
+                <div class="grid">
+                    <div class="card">
+                        <div class="icon-box"><i class="fas fa-money-bill-wave"></i></div>
+                        <h3>Income Tax Changes</h3>
+                        <p>Detailed analysis of PAYE adjustments and corporate tax reforms aimed at revenue collection.</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon-box"><i class="fas fa-shopping-cart"></i></div>
+                        <h3>Value Added Tax</h3>
+                        <p>Insights into zero-rated items, exemptions, and the new 16% standard rate applications.</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon-box"><i class="fas fa-gas-pump"></i></div>
+                        <h3>Excise Duty</h3>
+                        <p>Changes in levies on fuel, beverages, and telecommunication services that impact daily living.</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon-box"><i class="fas fa-landmark"></i></div>
+                        <h3>Housing Levy</h3>
+                        <p>Understanding the statutory deductions and their long-term implications for the workforce.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="comparison" class="comparison-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Comparative <span>Analysis</span></h2>
+                    <p>Comparing what you paid in 2025 versus what is proposed for 2026.</p>
+                </div>
+                
+                <div class="comparison-wrapper">
+                    <div class="comparison-table">
+                        <div class="table-header">
+                            <div class="row">
+                                <div class="cell">Tax Category</div>
+                                <div class="cell">Old Rate (2025)</div>
+                                <div class="cell">New Rate (2026)</div>
+                                <div class="cell">The Change</div>
+                            </div>
+                        </div>
+                        <div class="table-body">
+                            <div class="row">
+                                <div class="cell primary">Housing Levy</div>
+                                <div class="cell" data-label="Old Rate (2025)">1.5% of Gross</div>
+                                <div class="cell" data-label="New Rate (2026)">1.5% of Gross</div>
+                                <div class="cell neutral" data-label="The Change">Maintained</div>
+                            </div>
+                            <div class="row">
+                                <div class="cell primary">VAT on Bread</div>
+                                <div class="cell" data-label="Old Rate (2025)">Zero-rated</div>
+                                <div class="cell" data-label="New Rate (2026)">16% (Standard)</div>
+                                <div class="cell increase" data-label="The Change">+16%</div>
+                            </div>
+                            <div class="row">
+                                <div class="cell primary">Motor Vehicle Tax</div>
+                                <div class="cell" data-label="Old Rate (2025)">None</div>
+                                <div class="cell" data-label="New Rate (2026)">2.5% of Value</div>
+                                <div class="cell increase" data-label="The Change">New Tax</div>
+                            </div>
+                            <div class="row">
+                                <div class="cell primary">Eco Levy</div>
+                                <div class="cell" data-label="Old Rate (2025)">N/A</div>
+                                <div class="cell" data-label="New Rate (2026)">Ksh 98 - 1,275</div>
+                                <div class="cell increase" data-label="The Change">New Levy</div>
+                            </div>
+                            <div class="row">
+                                <div class="cell primary">Digital Services</div>
+                                <div class="cell" data-label="Old Rate (2025)">1.5% (Non-res)</div>
+                                <div class="cell" data-label="New Rate (2026)">1.5% (Domestic)</div>
+                                <div class="cell expansion" data-label="The Change">Expansion</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="impact" class="impact-section">
+            <div class="container">
+                <div class="content-split">
+                    <div class="impact-text">
+                        <span class="badge">Sectoral Analysis</span>
+                        <h2>Key <span>Impacts</span></h2>
+                        <div class="impact-items">
+                            <div class="impact-item">
+                                <div class="impact-icon"><i class="fas fa-shopping-cart"></i></div>
+                                <div class="impact-content">
+                                    <h4>Cost of Living</h4>
+                                    <p>Analyzing the ripple effect on essential household commodities and local services.</p>
+                                </div>
+                            </div>
+                            <div class="impact-item">
+                                <div class="impact-icon"><i class="fas fa-briefcase"></i></div>
+                                <div class="impact-content">
+                                    <h4>Business Growth</h4>
+                                    <p>How the 2026 tax environment affects MSMEs and large scale investments.</p>
+                                </div>
+                            </div>
+                            <div class="impact-item">
+                                <div class="impact-icon"><i class="fas fa-mobile-alt"></i></div>
+                                <div class="impact-content">
+                                    <h4>Digital Economy</h4>
+                                    <p>Revised taxes affecting local startups, remote workers, and digital platforms.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="impact-visual">
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <h3>2026 Projections</h3>
+                                <p>Economic Outlook Summary</p>
+                            </div>
+                            <div class="metric-body">
+                                <div class="metric-row">
+                                    <span>Revenue Target</span>
+                                    <strong>Ksh 302B</strong>
+                                </div>
+                                <div class="metric-row">
+                                    <span>GDP Growth</span>
+                                    <strong>5.2%</strong>
+                                </div>
+                                <div class="metric-row">
+                                    <span>Inflation Cap</span>
+                                    <strong>4.5%</strong>
+                                </div>
+                            </div>
+                            <div class="metric-footer">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 75%;"></div>
+                                </div>
+                                <small>75% Revenue focused on Debt Servicing</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="feedback" class="contact-section">
+            <div class="container">
+                <div class="contact-wrapper">
+                    <div class="contact-info">
+                        <span class="badge">Get In Touch</span>
+                        <h2>Have <span>Questions?</span></h2>
+                        <p>Our team of fiscal experts is ready to help you navigate the 2026 Finance Bill. Send us a message and we'll get back to you shortly.</p>
+                        
+                        <div class="contact-details">
+                            <div class="detail-item">
+                                <i class="fas fa-envelope"></i>
+                                <div>
+                                    <h4>Email Us</h4>
+                                    <p>info@financebill2026.go.ke</p>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-phone-alt"></i>
+                                <div>
+                                    <h4>Call Support</h4>
+                                    <p>+254 700 000 000</p>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <div>
+                                    <h4>Office</h4>
+                                    <p>Treasury Building, Nairobi</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-card">
+                        <form id="contact-form">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="user_name">Full Name</label>
+                                    <input type="text" id="user_name" name="user_name" placeholder="John Doe" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="user_email">Email Address</label>
+                                    <input type="email" id="user_email" name="user_email" placeholder="john@example.com" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="subject">Subject</label>
+                                <input type="text" id="subject" name="subject" placeholder="Inquiry about VAT changes" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Your Message</label>
+                                <textarea id="message" name="message" rows="5" placeholder="How can we help you today?" required></textarea>
+                            </div>
+                            <button type="submit" class="submit-btn" id="submit-btn">
+                                <span>Send Message</span>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                            <div id="form-status" class="form-status"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- AI Engine Dashboard -->
+        <section id="ai-engine" class="engine-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="badge">AI Fiscal Engine</span>
+                    <h2>Intelligence <span>Insights</span></h2>
+                    <p>Advanced data modeling and sentiment analysis of the 2026 legislative framework.</p>
+                </div>
+                
+                <div class="engine-grid">
+                    <div class="engine-card">
+                        <div class="engine-viz">
+                            <div class="circle-viz">
+                                <span class="val">84%</span>
+                                <svg viewBox="0 0 36 36">
+                                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--red)" stroke-width="2" stroke-dasharray="84, 100" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="engine-info">
+                            <h4>Economic Complexity</h4>
+                            <p>High structural shift in tax categories compared to previous 3 budget cycles.</p>
+                        </div>
+                    </div>
+                    <div class="engine-card">
+                        <div class="engine-viz">
+                            <div class="sentiment-viz">
+                                <div class="bar-fill" style="width: 62%; background: var(--gold);"></div>
+                            </div>
+                        </div>
+                        <div class="engine-info">
+                            <h4>Fiscal Sentiment</h4>
+                            <p>Current public discourse analysis indicates cautious market reception (62% Neutral/Bullish).</p>
+                        </div>
+                    </div>
+                    <div class="engine-card">
+                        <div class="engine-viz">
+                            <div class="node-viz">
+                                <i class="fas fa-network-wired"></i>
+                            </div>
+                        </div>
+                        <div class="engine-info">
+                            <h4>Revenue Probability</h4>
+                            <p>Predictive model estimates a 78% likelihood of achieving the 302B revenue target.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Existing Sections ... -->
+        <div id="ai-advisor" class="ai-bubble">
+            <div class="ai-trigger">
+                <i class="fas fa-robot"></i>
+                <span>Ask AI Advisor</span>
+            </div>
+            <div class="ai-window">
+                <div class="ai-header">
+                    <div class="ai-status">
+                        <span class="pulse"></span>
+                        <strong>AI Fiscal Advisor</strong>
+                    </div>
+                    <button class="ai-close"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="ai-body" id="ai-chat-body">
+                    <div class="ai-message bot">
+                        Hello! I'm your AI advisor. Ask me anything about the Finance Bill 2026. For example: "How does the bread tax affect me?"
+                    </div>
+                </div>
+                <div class="ai-footer">
+                    <input type="text" id="ai-input" placeholder="Type your question...">
+                    <button id="ai-send"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="logo">
+                        <div class="logo-text">FINANCE BILL <span>2026</span></div>
+                    </div>
+                    <p>Independent review and analysis of Kenya's tax policies.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#">The Constitution</a></li>
+                        <li><a href="#">National Treasury</a></li>
+                        <li><a href="#">Parliament Portal</a></li>
+                    </ul>
+                </div>
+                <div class="footer-social">
+                    <h4>Follow Updates</h4>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Finance Bill Review. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="knowledge_base.js"></script>
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
