@@ -185,68 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (aiSend) aiSend.addEventListener('click', handleAISend);
     if (aiInput) aiInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAISend(); });
 
-    // Contact Form Submission (EmailJS)
-    const contactForm = document.getElementById('contact-form');
-    const formStatus = document.getElementById('form-status');
-    const submitBtn = document.getElementById('submit-btn');
-
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            // Show loading state
-            submitBtn.disabled = true;
-            submitBtn.querySelector('span').textContent = 'Sending...';
-            submitBtn.querySelector('i').className = 'fas fa-spinner fa-spin';
-            
-            // Collect form data
-            const formData = {
-                user_name: document.getElementById('user_name').value,
-                user_email: document.getElementById('user_email').value,
-                subject: document.getElementById('subject').value,
-                message: document.getElementById('message').value
-            };
-
-            // Send via EmailJS
-            if (typeof EMAILJS_CONFIG !== 'undefined') {
-                emailjs.send(EMAILJS_CONFIG.SERVICE_ID, EMAILJS_CONFIG.TEMPLATE_ID, formData)
-                    .then(function() {
-                        // Success
-                        formStatus.textContent = "Message sent successfully! We'll get back to you soon.";
-                        formStatus.className = "form-status success";
-                        contactForm.reset();
-                        
-                        // Reset button
-                        submitBtn.disabled = false;
-                        submitBtn.querySelector('span').textContent = 'Send Message';
-                        submitBtn.querySelector('i').className = 'fas fa-paper-plane';
-                        
-                        // Hide message after 5 seconds
-                        setTimeout(() => {
-                            formStatus.style.display = 'none';
-                        }, 5000);
-                    }, function(error) {
-                        // Error
-                        console.error('EmailJS Error:', error);
-                        formStatus.textContent = "Oops! Something went wrong. Please try again or email us directly.";
-                        formStatus.className = "form-status error";
-                        
-                        // Reset button
-                        submitBtn.disabled = false;
-                        submitBtn.querySelector('span').textContent = 'Send Message';
-                        submitBtn.querySelector('i').className = 'fas fa-paper-plane';
-                    });
-            } else {
-                // Fallback if EmailJS is not configured
-                console.warn('EmailJS not configured');
-                formStatus.textContent = "Email service not configured. Please try again later.";
-                formStatus.className = "form-status error";
-                submitBtn.disabled = false;
-                submitBtn.querySelector('span').textContent = 'Send Message';
-                submitBtn.querySelector('i').className = 'fas fa-paper-plane';
-            }
-        });
-    }
 
     // Dynamic CSS for animations
     const style = document.createElement('style');
