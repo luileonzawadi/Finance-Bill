@@ -1020,6 +1020,136 @@ footer::before {
     transition: var(--transition);
 }
 
+/* AI Engine Dashboard Visuals */
+.circular-progress {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+.circular-progress svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.circular-progress circle {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+}
+
+.circular-progress .bg { stroke: #E2E8F0; }
+.circular-progress .fg { 
+    stroke: var(--red); 
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    transition: stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.circular-progress:hover .fg,
+.reveal-active .fg {
+    stroke-dashoffset: 45; /* Shows 84% on reveal */
+}
+
+.reveal-active .sentiment-bar .fill {
+    /* Animations will trigger based on the width transition */
+}
+
+.progress-val {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--black);
+}
+
+.progress-val span { font-size: 0.9rem; opacity: 0.5; }
+
+.sentiment-dashboard {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.sentiment-item {
+    width: 100%;
+}
+
+.sentiment-item .label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+    text-align: left;
+    color: var(--text-main);
+}
+
+.sentiment-bar {
+    width: 100%;
+    height: 8px;
+    background: #E2E8F0;
+    border-radius: 100px;
+    overflow: hidden;
+}
+
+.sentiment-bar .fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 2s ease-out;
+}
+
+.probability-node {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle at center, #1E293B, var(--black));
+    color: white;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(198, 0, 0, 0.1);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.node-pulse {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid var(--red);
+    border-radius: 20px;
+    animation: nodePulse 2s infinite;
+}
+
+@keyframes nodePulse {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.4); opacity: 0; }
+}
+
+.scan-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgba(255,255,255,0.2);
+    animation: scan 3s linear infinite;
+}
+
+@keyframes scan {
+    0% { top: 0; }
+    100% { top: 100%; }
+}
+
 /* Comprehensive Responsive Design System */
 
 /* Large Tablets & Small Laptops (1024px) */
