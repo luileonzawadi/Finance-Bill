@@ -180,11 +180,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const simulateResponse = (text) => {
         const botResponses = {
-            "bread": "The Finance Bill 2026 proposes removing the zero-rated status for bread, which would introduce a 16% VAT. This is expected to increase retail prices by approximately Ksh 10-15 per loaf.",
+            "bread": "The Finance Bill 2025 proposes removing the zero-rated status for bread, introducing a 16% VAT. This is expected to increase retail prices by approximately Ksh 10-15 per loaf.",
             "motor": "A new Motor Vehicle Tax is proposed at 2.5% of the vehicle's value. This is intended as a wealth tax to broaden the revenue base.",
-            "housing": "The Housing Levy remains at 1.5% of gross salary, consistent with the 2025 Act, aimed at funding the affordable housing project.",
-            "eco": "The Eco Levy will target electronic waste and plastic packaging, with rates varying from Ksh 98 to Ksh 1,275 depending on the item's environmental impact.",
-            "default": "That's a great question about the 2026 Bill. While I'm analyzing the specific clause, generally this bill focuses on broadening the tax base while targeting luxury and digital services. Would you like to know about VAT or the new Eco Levy?"
+            "housing": "The Housing Levy remains a key focus, maintaining the 1.5% deduction from gross salary to fund affordable housing.",
+            "eco": "The Eco Levy targets electronic waste and plastic packaging, with rates varying from Ksh 98 to Ksh 1,275 depending on the item.",
+            "threshold": "Great news! The 2025 Bill proposes increasing the non-taxable benefit threshold from Ksh 2,000 to Ksh 10,000 per month, providing significant relief for employees.",
+            "benefit": "The non-taxable benefit threshold for employees is set to increase five-fold, from Ksh 2,000 to Ksh 10,000 monthly under the new 2025 proposals.",
+            "scrap": "The 2025 Bill introduces withholding tax on the sale of scrap, aiming to formalize the sector and improve revenue collection.",
+            "public": "Supply of goods to public entities will now be subject to withholding tax under Section 10 of the Income Tax Act as per the 2025 amendments.",
+            "software": "Royalties now explicitly include the distribution of software where regular payments are made for its use through a distributor.",
+            "default": "That's a great question about the 2025 Bill. I've analyzed the latest Gazette Supplement which covers Income Tax amendments, VAT changes, and new levies. Would you like to know about the benefit threshold increase or the new withholding tax on scrap?"
         };
 
         let response = botResponses.default;

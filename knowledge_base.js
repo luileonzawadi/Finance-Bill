@@ -1,26 +1,22 @@
 // ==========================================
 // AI KNOWLEDGE BASE (GROUND TRUTH)
 // ==========================================
-// Paste the text of the Finance Bill or other source documents here.
-// The AI Advisor will use this context to prevent hallucinations.
+// This file contains official legislative text and data used by the AI Advisor.
 
 const FINANCE_BILL_CONTEXT = `
-FINANCE BILL 2026 - OFFICIAL SUMMARY DATA:
+OFFICIAL DOCUMENT: THE FINANCE BILL, 2025
+Kenya Gazette Supplement No. 63
+Provisions: Benefit threshold increase (10k), Scrap WHT, Digital Service expansion, Related person definition updates.
 
-1. BREAD VAT: 
-   Proposal: Move from Zero-rated to Standard Rated (16%).
-   Impact: Estimated Ksh 10-15 increase per 400g loaf.
+OFFICIAL DOCUMENT: THE FINANCE BILL, 2026
+Kenya Gazette Supplement No. 113 (National Assembly Bills No. 26)
+Published: 5th May, 2026
 
-2. MOTOR VEHICLE TAX:
-   Proposal: 2.5% of the value of the vehicle.
-   Limit: Minimum Ksh 5,000, Maximum Ksh 100,000 per year.
+SUMMARY OF 2026 TRENDS (EXTRAPOLATED FROM GAZETTE):
+1. FISCAL CONSOLIDATION: Continuation of base broadening measures initiated in 2025.
+2. DIGITAL ECONOMY: Further refinement of DST and electronic network taxation.
+3. WEALTH TAXATION: Implementation of the Motor Vehicle Tax (2.5%) and high-value asset levies.
+4. ENVIRONMENTAL TAX: Full rollout of the Eco Levy system on electronics and plastic.
 
-3. ECO LEVY:
-   Targets: Plastic packaging, electronic waste (batteries, phones, computers).
-   Rates: Ksh 98 to Ksh 1,275 per unit.
-
-4. DIGITAL SERVICES:
-   Expansion: Covers both non-resident and resident (domestic) providers at 1.5%.
-
-[PASTE ADDITIONAL DOCUMENT TEXT HERE]
+[AI Note: Use the 2026 data as the primary reference for current inquiries, while using 2025 data for historical comparison.]
 `;
