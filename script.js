@@ -223,35 +223,43 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             // Send via EmailJS
-            // NOTE: The user must replace "YOUR_SERVICE_ID" and "YOUR_TEMPLATE_ID" 
-            // in their EmailJS dashboard for this to work.
-            emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", formData)
-                .then(function() {
-                    // Success
-                    formStatus.textContent = "Message sent successfully! We'll get back to you soon.";
-                    formStatus.className = "form-status success";
-                    contactForm.reset();
-                    
-                    // Reset button
-                    submitBtn.disabled = false;
-                    submitBtn.querySelector('span').textContent = 'Send Message';
-                    submitBtn.querySelector('i').className = 'fas fa-paper-plane';
-                    
-                    // Hide message after 5 seconds
-                    setTimeout(() => {
-                        formStatus.style.display = 'none';
-                    }, 5000);
-                }, function(error) {
-                    // Error
-                    console.error('EmailJS Error:', error);
-                    formStatus.textContent = "Oops! Something went wrong. Please try again or email us directly.";
-                    formStatus.className = "form-status error";
-                    
-                    // Reset button
-                    submitBtn.disabled = false;
-                    submitBtn.querySelector('span').textContent = 'Send Message';
-                    submitBtn.querySelector('i').className = 'fas fa-paper-plane';
-                });
+            if (typeof EMAILJS_CONFIG !== 'undefined') {
+                emailjs.send(EMAILJS_CONFIG.SERVICE_ID, EMAILJS_CONFIG.TEMPLATE_ID, formData)
+                    .then(function() {
+                        // Success
+                        formStatus.textContent = "Message sent successfully! We'll get back to you soon.";
+                        formStatus.className = "form-status success";
+                        contactForm.reset();
+                        
+                        // Reset button
+                        submitBtn.disabled = false;
+                        submitBtn.querySelector('span').textContent = 'Send Message';
+                        submitBtn.querySelector('i').className = 'fas fa-paper-plane';
+                        
+                        // Hide message after 5 seconds
+                        setTimeout(() => {
+                            formStatus.style.display = 'none';
+                        }, 5000);
+                    }, function(error) {
+                        // Error
+                        console.error('EmailJS Error:', error);
+                        formStatus.textContent = "Oops! Something went wrong. Please try again or email us directly.";
+                        formStatus.className = "form-status error";
+                        
+                        // Reset button
+                        submitBtn.disabled = false;
+                        submitBtn.querySelector('span').textContent = 'Send Message';
+                        submitBtn.querySelector('i').className = 'fas fa-paper-plane';
+                    });
+            } else {
+                // Fallback if EmailJS is not configured
+                console.warn('EmailJS not configured');
+                formStatus.textContent = "Email service not configured. Please try again later.";
+                formStatus.className = "form-status error";
+                submitBtn.disabled = false;
+                submitBtn.querySelector('span').textContent = 'Send Message';
+                submitBtn.querySelector('i').className = 'fas fa-paper-plane';
+            }
         });
     }
 
