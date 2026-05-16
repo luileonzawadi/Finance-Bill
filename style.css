@@ -869,19 +869,6 @@ footer::before {
     transform: translateY(-3px);
 }
 
-.footer-bottom {
-    background: #020617;
-    padding: 1.5rem 0;
-    text-align: center;
-}
-
-.footer-bottom p {
-    color: #475569;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-}
 
 /* Comprehensive Responsive Design */
 /* AI Advisor Framework */

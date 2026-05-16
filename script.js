@@ -137,69 +137,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const config = window.AI_CONFIG;
 
-        if (config && config.isLive && config.apiKey && config.apiKey !== 'YOUR_API_KEY_HERE') {
+        if (config && config.isLive) {
             try {
-                let response;
-                // DETECT GOOGLE (GEMINI) VS OPENAI
-                if (config.apiKey.startsWith('AIza')) {
-                    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${config.apiKey}`;
-                    response = await fetch(geminiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{
-                                parts: [{
-                                    text: `ROLE: You are the Senior Fiscal Analyst for the Finance Bill Review Portal. 
-                                    PERSONALITY: Professional, authoritative, non-partisan, and concise.
-                                    SOURCE MATERIAL: ${FINANCE_BILL_CONTEXT}
-                                    
-                                    TASK: Answer the following user question based ONLY on the source material provided. If the information is not present, explain that you are analyzing the official Gazette Supplements for that specific detail.
-                                    
-                                    USER INQUIRY: ${text}`
-                                }]
-                            }]
-                        })
-                    });
-                    
-                    if (!response.ok) throw new Error(`API returned ${response.status}`);
-                    
-                    const data = await response.json();
-                    
-                    if (data.error) throw new Error(data.error.message);
-                    
-                    if (data.candidates && data.candidates[0]) {
-                        typing.remove();
-                        addMessage(data.candidates[0].content.parts[0].text, 'bot');
-                    } else {
-                        throw new Error("No response from AI");
-                    }
-                } else {
-                    // OPENAI COMPATIBLE
-                    response = await fetch(config.endpoint, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${config.apiKey}`
-                        },
-                        body: JSON.stringify({
-                            model: "gpt-4",
-                            messages: [
-                                { 
-                                    role: "system", 
-                                    content: `You are an expert on the Kenya Finance Bill. 
-                                    CONTEXT: ${FINANCE_BILL_CONTEXT}` 
-                                },
-                                { role: "user", content: text }
-                            ]
-                        })
-                    });
-                    
-                    if (!response.ok) throw new Error(`API returned ${response.status}`);
-                    
-                    const data = await response.json();
-                    typing.remove();
-                    addMessage(data.choices[0].message.content, 'bot');
-                }
+                // CALL EXTERNALIZED AI SERVICE FROM CONFIG
+                const aiResponse = await config.call(text, FINANCE_BILL_CONTEXT);
+                typing.remove();
+                addMessage(aiResponse, 'bot');
             } catch (error) {
                 console.error("AI Error:", error);
                 typing.remove();
