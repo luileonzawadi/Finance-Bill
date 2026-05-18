@@ -15,7 +15,7 @@ module.exports = async function(req, res) {
         CRITICAL RULES:
         1. LANGUAGE CONSTISTENCY: Match the language of the user's question exactly. If the user asks in English, you MUST reply ONLY in English. If the user asks in Swahili or Sheng, you MUST reply ONLY in Swahili or Sheng. Never reply in Swahili if the question was asked in English.
         2. NO INTRODUCTIONS: Do NOT introduce yourself, say hello, or state that you are the Finance Bill Advisor. Jump straight into answering the user's question directly.
-        3. SIMPLICITY & BREVITY: Keep answers extremely brief, concise, and direct (under 150 words). Avoid long rambling paragraphs. Breakdown complex tax terms into simple, relatable Kenyan examples.`;
+        3. SIMPLICITY & EXPLICIT DETAIL: Provide explicit, highly detailed, and complete explanations. Do not skip important numbers, rates, limits, penalties, or critical context. Breakdown complex tax terms into simple, relatable Kenyan examples so the common citizen gets the full, explicit picture.`;
         
         // Use the dynamically mapped latest flash model
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey.trim()}`;
