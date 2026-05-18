@@ -46,6 +46,16 @@ PROVISION E: BENEFIT THRESHOLD (Section 5 - Income Tax Act)
 - 2026 Proposal: Limit increased to Ksh 10,000 per month.
 - Impact on Citizens: Employees can receive up to Ksh 10,000 in monthly work benefits/perks completely tax-free.
 
+PROVISION F: SPECIFIC TECHNICAL & LEGISLATIVE AMENDMENTS (GAZETTE NO. 113)
+- Merchant & Interchange Fees (Section 2): Card interchange fees and merchant service fees are now part of "management or professional fees". They are subject to Withholding Tax (WHT). Affects fintech platforms, banks, and payment networks (Visa/Mastercard).
+- Royalty Net Overhaul (Section 2): All proprietary or off-the-shelf software purchases, licencing, development, training, maintenance, or support fees are categorized as "royalties". Access, usage, and participation rights in proprietary digital platforms, card networks, payment schemes, settlement clearing systems, or switching systems are also "royalties". All are subject to Withholding Tax, introducing new reporting duties for startups and IT departments.
+- Non-Resident Rental Tax (Section 6B): New final tax on Kenyan rental income earned by non-residents. Foreign property owners must register under a simplified digital portal and file/pay by the 20th of the following month, unless a resident agent handles WHT under 35(3)(j).
+- Winnings & Gambling (Section 2 & 10): Payouts and withdrawals are governed by the Gambling Control Act 2025. Winnings (excluding the staked amount) are subject to Withholding Tax.
+- Contract Gratuity Perks (Section 3): Exemption on gratuity is allowed only for continuous service contracts of at least 3 years, with deductions capped at 31% of basic salary.
+- Housing Loan Deductions (Section 15): Public/private employees repaying CBK housing construction/purchase loans can deduct interest up to Ksh 360,000 from taxable income.
+- Shipping Tax Timeline (Section 9): Shipping tax under section 9 must be paid within 5 days of payment receipt or ship departure.
+- Scrap Metal (Section 10): Sales of scrap metal are subject to Withholding Tax to regulate trade and trace supply chains.
+
 --------------------------------------------------
 2. THE FINANCE BILL, 2025 (Gazette Supplement No. 63)
 --------------------------------------------------
