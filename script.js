@@ -160,6 +160,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const simulateResponse = (text) => {
         const botResponses = {
+            "bread": "The Finance Bill 2025 proposes removing the zero‑rated status for bread, introducing a 16% VAT. This is expected to increase retail prices by approximately Ksh 10‑15 per loaf.",
+            "motor": "A new Motor Vehicle Tax is proposed at 2.5% of the vehicle's value. This aims to broaden the revenue base as a wealth tax.",
+            "housing": "The Housing Levy remains a key focus, maintaining the 1.5% deduction from gross salary to fund affordable housing.",
+            "eco": "The Eco Levy targets electronic waste and plastic packaging, with rates ranging from Ksh 98 to Ksh 1,275 depending on the item.",
+            "threshold": "Great news! The 2025 Bill proposes increasing the non‑taxable benefit threshold from Ksh 2,000 to Ksh 10,000 per month, providing significant relief for employees.",
+            "benefit": "The non‑taxable benefit threshold for employees is set to increase five‑fold, from Ksh 2,000 to Ksh 10,000 monthly under the new 2025 proposals.",
+            "scrap": "The 2025 Bill introduces withholding tax on the sale of scrap, aiming to formalise the sector and improve revenue collection.",
+            "public": "Supply of goods to public entities will now be subject to withholding tax under Section 10 of the Income Tax Act as per the 2025 amendments.",
+            "software": "Royalties now explicitly include the distribution of software where regular payments are made for its use through a distributor.",
+            "tax": "The Finance Bill brings several tax changes, including adjustments to VAT, new levies, and revised thresholds. Ask for specifics like “VAT”, “levy”, or “threshold”.",
+            "levy": "Various levies are introduced or updated, such as the Eco Levy and Housing Levy. Which levy are you interested in?",
+            "default": "I’m here to help with the Finance Bill 2025/2026. You can ask about tax changes, new levies, thresholds, or any specific provision you’re curious about."
+        };
             "bread": "The Finance Bill 2025 proposes removing the zero-rated status for bread, introducing a 16% VAT. This is expected to increase retail prices by approximately Ksh 10-15 per loaf.",
             "motor": "A new Motor Vehicle Tax is proposed at 2.5% of the vehicle's value. This is intended as a wealth tax to broaden the revenue base.",
             "housing": "The Housing Levy remains a key focus, maintaining the 1.5% deduction from gross salary to fund affordable housing.",
