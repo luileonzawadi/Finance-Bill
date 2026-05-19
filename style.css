@@ -866,6 +866,56 @@ footer::before {
 }
 
 
+/* Footer Contributors */
+.footer-contributors {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 2rem 0;
+    text-align: center;
+}
+
+.contributors-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #64748B;
+    margin-bottom: 1.2rem;
+}
+
+.footer-contributors-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+}
+
+.footer-contributor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.footer-contributor:hover {
+    opacity: 1;
+}
+
+.footer-contributor img {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+}
+
+.footer-contributor span {
+    font-size: 0.75rem;
+    color: #94A3B8;
+    font-weight: 600;
+}
+
 /* Comprehensive Responsive Design */
 /* AI Advisor Framework */
 .ai-bubble {
