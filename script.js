@@ -16,8 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileMenu.addEventListener('click', () => {
             navLinks.classList.toggle('active');
             mobileMenu.classList.toggle('active');
-            
-            // Toggle body scroll
             document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : 'auto';
         });
     }
@@ -26,29 +24,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            
             if (navLinks && navLinks.classList.contains('active')) {
                 navLinks.classList.remove('active');
                 if (mobileMenu) mobileMenu.classList.remove('active');
                 document.body.style.overflow = 'auto';
             }
-
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
-                window.scrollTo({
-                    top: target.offsetTop - 80,
-                    behavior: 'smooth'
-                });
+                window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
             }
         });
     });
 
     // Intersection Observer for Premium Reveal
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
     const revealObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -56,33 +44,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 revealObserver.unobserve(entry.target);
             }
         });
-    }, observerOptions);
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-    const revealElements = document.querySelectorAll('.card, .section-header, .impact-item, .hero-text, .image-wrapper, .comparison-wrapper, .metric-card');
-    
-    revealElements.forEach(el => {
+    document.querySelectorAll('.card, .section-header, .impact-item, .hero-text, .image-wrapper, .comparison-wrapper, .metric-card').forEach(el => {
         el.classList.add('reveal-hidden');
         revealObserver.observe(el);
     });
 
     // Hover Magnets for Cards
-    const cards = document.querySelectorAll('.card, .metric-card, .comparison-table .row');
-    cards.forEach(card => {
+    document.querySelectorAll('.card, .metric-card, .comparison-table .row').forEach(card => {
         card.addEventListener('mousemove', (e) => {
             if (window.innerWidth < 1024) return;
             const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            
-            const rotateX = (y - centerY) / 20;
-            const rotateY = (centerX - x) / 20;
-            
+            const rotateX = (e.clientY - rect.top - rect.height / 2) / 20;
+            const rotateY = (rect.width / 2 - (e.clientX - rect.left)) / 20;
             card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px)`;
         });
-        
         card.addEventListener('mouseleave', () => {
             card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
         });
@@ -109,11 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ==========================================
-    // AI API INTEGRATION (LOGIC)
-    // ==========================================
-    // (Settings are pulled from config.js)
-
     const addMessage = (text, type) => {
         const msg = document.createElement('div');
         msg.className = `ai-message ${type}`;
@@ -122,67 +94,20 @@ document.addEventListener('DOMContentLoaded', () => {
         aiChatBody.scrollTop = aiChatBody.scrollHeight;
     };
 
-    const handleAISend = async () => {
-        const text = aiInput.value.trim().toLowerCase();
-        if (!text) return;
-
-        addMessage(aiInput.value, 'user');
-        aiInput.value = '';
-
-        // Simulate typing/processing
-        const typing = document.createElement('div');
-        typing.className = 'ai-message bot';
-        typing.textContent = 'Analyzing bill...';
-        aiChatBody.appendChild(typing);
-
-        const config = window.AI_CONFIG;
-
-        if (config && config.isLive) {
-            try {
-                // CALL EXTERNALIZED AI SERVICE FROM CONFIG
-                const aiResponse = await config.call(text, FINANCE_BILL_CONTEXT);
-                typing.remove();
-                addMessage(aiResponse, 'bot');
-            } catch (error) {
-                console.error("AI Error:", error);
-                typing.remove();
-                addMessage('Live Intelligence Error: Unable to fetch live data. Using offline analysis...', 'bot');
-                setTimeout(() => simulateResponse(text), 1500);
-            }
-        } else {
-            // Simulated Response (Fallback)
-            setTimeout(() => {
-                typing.remove();
-                simulateResponse(text);
-            }, 1500);
-        }
-    };
-
     const simulateResponse = (text) => {
         const botResponses = {
-            "bread": "The Finance Bill 2025 proposes removing the zero‑rated status for bread, introducing a 16% VAT. This is expected to increase retail prices by approximately Ksh 10‑15 per loaf.",
-            "motor": "A new Motor Vehicle Tax is proposed at 2.5% of the vehicle's value. This aims to broaden the revenue base as a wealth tax.",
-            "housing": "The Housing Levy remains a key focus, maintaining the 1.5% deduction from gross salary to fund affordable housing.",
-            "eco": "The Eco Levy targets electronic waste and plastic packaging, with rates ranging from Ksh 98 to Ksh 1,275 depending on the item.",
-            "threshold": "Great news! The 2025 Bill proposes increasing the non‑taxable benefit threshold from Ksh 2,000 to Ksh 10,000 per month, providing significant relief for employees.",
-            "benefit": "The non‑taxable benefit threshold for employees is set to increase five‑fold, from Ksh 2,000 to Ksh 10,000 monthly under the new 2025 proposals.",
-            "scrap": "The 2025 Bill introduces withholding tax on the sale of scrap, aiming to formalise the sector and improve revenue collection.",
-            "public": "Supply of goods to public entities will now be subject to withholding tax under Section 10 of the Income Tax Act as per the 2025 amendments.",
-            "software": "Royalties now explicitly include the distribution of software where regular payments are made for its use through a distributor.",
-            "tax": "The Finance Bill brings several tax changes, including adjustments to VAT, new levies, and revised thresholds. Ask for specifics like “VAT”, “levy”, or “threshold”.",
-            "levy": "Various levies are introduced or updated, such as the Eco Levy and Housing Levy. Which levy are you interested in?",
-            "default": "I’m here to help with the Finance Bill 2025/2026. You can ask about tax changes, new levies, thresholds, or any specific provision you’re curious about."
-        };
             "bread": "The Finance Bill 2025 proposes removing the zero-rated status for bread, introducing a 16% VAT. This is expected to increase retail prices by approximately Ksh 10-15 per loaf.",
             "motor": "A new Motor Vehicle Tax is proposed at 2.5% of the vehicle's value. This is intended as a wealth tax to broaden the revenue base.",
             "housing": "The Housing Levy remains a key focus, maintaining the 1.5% deduction from gross salary to fund affordable housing.",
             "eco": "The Eco Levy targets electronic waste and plastic packaging, with rates varying from Ksh 98 to Ksh 1,275 depending on the item.",
-            "threshold": "Great news! The 2025 Bill proposes increasing the non-taxable benefit threshold from Ksh 2,000 to Ksh 10,000 per month, providing significant relief for employees.",
+            "threshold": "The 2025 Bill proposes increasing the non-taxable benefit threshold from Ksh 2,000 to Ksh 10,000 per month, providing significant relief for employees.",
             "benefit": "The non-taxable benefit threshold for employees is set to increase five-fold, from Ksh 2,000 to Ksh 10,000 monthly under the new 2025 proposals.",
             "scrap": "The 2025 Bill introduces withholding tax on the sale of scrap, aiming to formalize the sector and improve revenue collection.",
             "public": "Supply of goods to public entities will now be subject to withholding tax under Section 10 of the Income Tax Act as per the 2025 amendments.",
             "software": "Royalties now explicitly include the distribution of software where regular payments are made for its use through a distributor.",
-            "default": "That's a great question about the 2025 Bill. I've analyzed the latest Gazette Supplement which covers Income Tax amendments, VAT changes, and new levies. Would you like to know about the benefit threshold increase or the new withholding tax on scrap?"
+            "tax": "The Finance Bill brings several tax changes, including adjustments to VAT, new levies, and revised thresholds. Ask for specifics like 'VAT', 'levy', or 'threshold'.",
+            "levy": "Various levies are introduced or updated, such as the Eco Levy and Housing Levy. Which levy are you interested in?",
+            "default": "I'm here to help with the Finance Bill 2025/2026. You can ask about tax changes, new levies, thresholds, or any specific provision you're curious about."
         };
 
         let response = botResponses.default;
@@ -195,9 +120,41 @@ document.addEventListener('DOMContentLoaded', () => {
         addMessage(response, 'bot');
     };
 
+    const handleAISend = async () => {
+        const text = aiInput.value.trim().toLowerCase();
+        if (!text) return;
+
+        addMessage(aiInput.value, 'user');
+        aiInput.value = '';
+
+        const typing = document.createElement('div');
+        typing.className = 'ai-message bot';
+        typing.textContent = 'Analyzing bill...';
+        aiChatBody.appendChild(typing);
+
+        const config = window.AI_CONFIG;
+
+        if (config && config.isLive) {
+            try {
+                const aiResponse = await config.call(text, FINANCE_BILL_CONTEXT);
+                typing.remove();
+                addMessage(aiResponse, 'bot');
+            } catch (error) {
+                console.error("AI Error:", error);
+                typing.remove();
+                addMessage('Live Intelligence Error: Unable to fetch live data. Using offline analysis...', 'bot');
+                setTimeout(() => simulateResponse(text), 1500);
+            }
+        } else {
+            setTimeout(() => {
+                typing.remove();
+                simulateResponse(text);
+            }, 1500);
+        }
+    };
+
     if (aiSend) aiSend.addEventListener('click', handleAISend);
     if (aiInput) aiInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAISend(); });
-
 
     // Dynamic CSS for animations
     const style = document.createElement('style');

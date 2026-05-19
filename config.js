@@ -4,7 +4,7 @@
 // IMPORTANT: Add this file to your .gitignore to prevent pushing your key to GitHub!
 
 var AI_CONFIG = {
-    isLive: true,
+    isLive: false,
     
     async call(userInput, context) {
         if (!this.isLive) throw new Error("AI not configured.");
