@@ -95,25 +95,25 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const simulateResponse = (text) => {
-        const botResponses = {
-            "bread": "The Finance Bill 2025 proposes removing the zero-rated status for bread, introducing a 16% VAT. This is expected to increase retail prices by approximately Ksh 10-15 per loaf.",
-            "motor": "A new Motor Vehicle Tax is proposed at 2.5% of the vehicle's value. This is intended as a wealth tax to broaden the revenue base.",
-            "housing": "The Housing Levy remains a key focus, maintaining the 1.5% deduction from gross salary to fund affordable housing.",
-            "eco": "The Eco Levy targets electronic waste and plastic packaging, with rates varying from Ksh 98 to Ksh 1,275 depending on the item.",
-            "threshold": "The 2025 Bill proposes increasing the non-taxable benefit threshold from Ksh 2,000 to Ksh 10,000 per month, providing significant relief for employees.",
-            "benefit": "The non-taxable benefit threshold for employees is set to increase five-fold, from Ksh 2,000 to Ksh 10,000 monthly under the new 2025 proposals.",
-            "scrap": "The 2025 Bill introduces withholding tax on the sale of scrap, aiming to formalize the sector and improve revenue collection.",
-            "public": "Supply of goods to public entities will now be subject to withholding tax under Section 10 of the Income Tax Act as per the 2025 amendments.",
-            "software": "Royalties now explicitly include the distribution of software where regular payments are made for its use through a distributor.",
-            "tax": "The Finance Bill brings several tax changes, including adjustments to VAT, new levies, and revised thresholds. Ask for specifics like 'VAT', 'levy', or 'threshold'.",
-            "levy": "Various levies are introduced or updated, such as the Eco Levy and Housing Levy. Which levy are you interested in?",
-            "default": "I'm here to help with the Finance Bill 2025/2026. You can ask about tax changes, new levies, thresholds, or any specific provision you're curious about."
-        };
+        const botResponses = [
+            { keys: ["bread", "vat", "food", "loaf"], reply: "The Finance Bill 2025 proposes removing the zero-rated status for bread, introducing a 16% VAT. This is expected to increase retail prices by approximately Ksh 10-15 per loaf." },
+            { keys: ["motor", "vehicle", "car", "car tax", "automobile"], reply: "A new Motor Vehicle Tax is proposed at 2.5% of the vehicle's value, with a minimum of Ksh 5,000 and a maximum of Ksh 100,000 per year." },
+            { keys: ["housing", "levy", "house", "affordable"], reply: "The Housing Levy maintains a 1.5% deduction from gross salary to fund affordable housing initiatives across Kenya." },
+            { keys: ["eco", "plastic", "electronic", "waste", "battery", "phone", "computer"], reply: "The Eco Levy targets plastic packaging and electronic waste (batteries, phones, computers) with rates ranging from Ksh 98 to Ksh 1,275 per unit." },
+            { keys: ["threshold", "benefit", "non-taxable", "employee"], reply: "The 2025 Bill proposes increasing the non-taxable benefit threshold from Ksh 2,000 to Ksh 10,000 per month, providing significant relief for employees." },
+            { keys: ["scrap", "junk", "metal"], reply: "The 2025 Bill introduces withholding tax on the sale of scrap, aiming to formalize the sector and improve revenue collection." },
+            { keys: ["software", "royalt", "digital", "online", "internet", "resident", "non-resident"], reply: "Digital services are now taxed at 1.5% covering both resident and non-resident providers. Royalties now explicitly include software distribution." },
+            { keys: ["kra", "revenue", "authority", "compliance", "enforcement"], reply: "The Finance Bill 2026 strengthens KRA enforcement through digital monitoring and automated compliance systems to widen the tax net." },
+            { keys: ["debt", "loan", "borrow", "repay"], reply: "Approximately 75% of collected revenue goes toward national debt repayment. The government is pursuing fiscal consolidation to reduce reliance on external borrowing." },
+            { keys: ["2025", "2026", "difference", "compare", "change", "vs"], reply: "Finance Bill 2025 introduced major reforms — new taxes, expanded levies, and new systems. Finance Bill 2026 focused on enforcement, digital monitoring, and automated compliance of those reforms." },
+            { keys: ["impact", "affect", "effect", "mwananchi", "citizen", "people"], reply: "Key impacts include: higher cost of living (VAT on bread, Eco Levy), stricter rules for small businesses and online sellers, and a new annual Motor Vehicle Tax for car owners." },
+            { keys: ["income", "salary", "paye", "withhold"], reply: "PAYE remains in effect. The Bill also introduces withholding tax on scrap sales and supplies to public entities under Section 10 of the Income Tax Act." },
+        ];
 
-        let response = botResponses.default;
-        for (let key in botResponses) {
-            if (text.includes(key)) {
-                response = botResponses[key];
+        let response = "I can answer questions about the Finance Bill 2025/2026. Try asking about: bread VAT, motor vehicle tax, eco levy, housing levy, digital services, KRA enforcement, or the impact on citizens.";
+        for (const item of botResponses) {
+            if (item.keys.some(k => text.includes(k))) {
+                response = item.reply;
                 break;
             }
         }
