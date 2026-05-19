@@ -916,6 +916,12 @@ footer::before {
     font-weight: 600;
 }
 
+.footer-contributor small {
+    font-size: 0.7rem;
+    color: #64748B;
+    font-weight: 400;
+}
+
 /* Comprehensive Responsive Design */
 /* AI Advisor Framework */
 .ai-bubble {
