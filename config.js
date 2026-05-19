@@ -20,9 +20,13 @@ var AI_CONFIG = {
 
             if (response.ok) {
                 let text = data.response;
-                // Strip all asterisks (*) to make it normal text
+                // Remove # headings
+                text = text.replace(/#{1,6}\s*/g, '');
+                // Convert **bold** to <strong>
+                text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                // Remove remaining single asterisks
                 text = text.replace(/\*/g, '');
-                // Normalize word spacing
+                // Normalize extra spaces
                 text = text.replace(/ {2,}/g, ' ');
                 return text.trim();
             } else {

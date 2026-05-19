@@ -89,7 +89,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const addMessage = (text, type) => {
         const msg = document.createElement('div');
         msg.className = `ai-message ${type}`;
-        msg.textContent = text;
+        if (type === 'bot') {
+            msg.innerHTML = text;
+        } else {
+            msg.textContent = text;
+        }
         aiChatBody.appendChild(msg);
         aiChatBody.scrollTop = aiChatBody.scrollHeight;
     };
