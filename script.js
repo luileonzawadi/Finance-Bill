@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error("AI Error:", error);
                 typing.remove();
-                addMessage(`Live Intelligence Error: ${error.message}. Attempting local analysis...`, 'bot');
+                addMessage('Live Intelligence Error: Unable to fetch live data. Using offline analysis...', 'bot');
                 setTimeout(() => simulateResponse(text), 1500);
             }
         } else {
