@@ -34,6 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 navLinks.classList.remove('active');
                 if (mobileMenu) mobileMenu.classList.remove('active');
                 document.body.style.overflow = 'auto';
+                const menuIcon = document.getElementById('menu-icon');
+                if (menuIcon) menuIcon.classList.replace('fa-times', 'fa-bars');
             }
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
