@@ -1,0 +1,18 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <!-- Crossed spears behind the shield -->
+    <line x1="20" y1="20" x2="80" y2="80" stroke="#C5A059" stroke-width="4" stroke-linecap="round" opacity="0.6" />
+    <line x1="80" y1="20" x2="20" y2="80" stroke="#C5A059" stroke-width="4" stroke-linecap="round" opacity="0.6" />
+    
+    <!-- The Kenyan Shield outline -->
+    <path d="M35,30 Q50,12 65,30 Q78,50 65,70 Q50,88 35,70 Q22,50 35,30 Z" fill="#C60000" stroke="#0F172A" stroke-width="3" />
+    <!-- Black half and green half -->
+    <path d="M35,30 Q50,12 50,12 L50,88 Q50,88 35,70 Q22,50 35,30 Z" fill="#0F172A" />
+    <path d="M65,30 Q50,12 50,12 L50,88 Q50,88 65,70 Q78,50 65,30 Z" fill="#00703C" />
+    
+    <!-- Gold stripe down the center of the shield -->
+    <line x1="50" y1="15" x2="50" y2="85" stroke="#C5A059" stroke-width="3" />
+    
+    <!-- Shield interior designs (traditional white circles/dots) -->
+    <circle cx="42" cy="50" r="3.5" fill="white" />
+    <circle cx="58" cy="50" r="3.5" fill="white" />
+</svg>

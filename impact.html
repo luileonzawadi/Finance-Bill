@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Bill Review | Kenya's Path Forward</title>
+    <title>Finance Bill Impact | Kenya's Path Forward</title>
     <meta name="description" content="A comprehensive review and analysis of the Finance Bill. Understand the tax changes, budget implications, and economic impact.">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -19,55 +20,146 @@
             }
         })();
     </script>
-<base target="_blank">
-<base target="_blank">
 </head>
 <body>
     <div id="scroll-progress"></div>
+    
+    <!-- Symbolic Rotating background SVG representing Kenya & Finance Bill -->
     <div class="national-spirals">
         <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
-            <g fill="none" stroke-width="2" stroke-linecap="round">
-                <!-- Black Spirals -->
-                <path class="spiral s-black" d="M400,400 c10,0 20,10 20,20 c0,20 -30,30 -50,30 c-40,0 -60,-50 -60,-90 c0,-70 70,-110 130,-110 c100,0 160,90 160,180 c0,130 -120,220 -240,220 c-170,0 -290,-150 -290,-310 c0,-210 200,-370 410,-370" />
-                <!-- Red Spirals -->
-                <path class="spiral s-red" d="M400,400 c0,10 10,20 20,20 c20,0 30,-30 30,-50 c0,-40 -50,-60 -90,-60 c-70,0 -110,70 -110,130 c0,100 90,160 180,160 c130,0 220,-120 220,-240 c0,-170 -150,-290 -310,-290 c-210,0 -370,200 -370,410" />
-                <!-- Green Spirals -->
-                <path class="spiral s-green" d="M400,400 c-10,0 -20,-10 -20,-20 c0,-20 30,-30 50,-30 c40,0 60,50 60,90 c0,70 -70,110 -130,110 c-100,0 -160,-90 -160,-180 c0,-130 120,-220 240,-220 c170,0 290,150 290,310 c0,210 -200,370 -410,370" />
+            <!-- Center Shield (symbolic, slow rotation) -->
+            <g class="center-shield">
+                <!-- Crossed spears behind the shield -->
+                <line x1="320" y1="320" x2="480" y2="480" stroke="var(--gold)" stroke-width="4" stroke-linecap="round" opacity="0.4" />
+                <line x1="480" y1="320" x2="320" y2="480" stroke="var(--gold)" stroke-width="4" stroke-linecap="round" opacity="0.4" />
+                
+                <!-- The Kenyan Shield outline -->
+                <path d="M370,350 Q400,320 430,350 Q460,400 430,450 Q400,480 370,450 Q340,400 370,350 Z" fill="var(--red)" stroke="var(--black)" stroke-width="3" />
+                <!-- Black half and green half -->
+                <path d="M370,350 Q400,320 400,320 L400,480 Q400,480 370,450 Q340,400 370,350 Z" fill="var(--black)" />
+                <path d="M430,350 Q400,320 400,320 L400,480 Q400,480 430,450 Q460,400 430,350 Z" fill="var(--green)" />
+                
+                <!-- Gold stripe down the center of the shield -->
+                <line x1="400" y1="325" x2="400" y2="475" stroke="var(--gold)" stroke-width="3" />
+                
+                <!-- Shield interior designs (traditional white circles/dots) -->
+                <circle cx="385" cy="400" r="4" fill="white" />
+                <circle cx="415" cy="400" r="4" fill="white" />
+            </g>
+
+            <!-- Outer Financial Ring (rotates clockwise) -->
+            <g class="ring-clockwise" opacity="0.25">
+                <circle cx="400" cy="400" r="280" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="12 12" fill="none" />
+                <!-- Financial Nodes & Symbols along the ring path -->
+                <text x="680" y="405" font-family="'Outfit', sans-serif" font-weight="800" font-size="16" fill="var(--red)" text-anchor="middle">%</text>
+                <text x="400" y="690" font-family="'Outfit', sans-serif" font-weight="800" font-size="14" fill="var(--green)" text-anchor="middle">Ksh</text>
+                <text x="120" y="405" font-family="'Outfit', sans-serif" font-weight="800" font-size="16" fill="var(--red)" text-anchor="middle">%</text>
+                <text x="400" y="130" font-family="'Outfit', sans-serif" font-weight="800" font-size="14" fill="var(--green)" text-anchor="middle">Ksh</text>
+                <circle cx="400" cy="400" r="320" stroke="var(--black)" stroke-width="1" stroke-dasharray="4 20" fill="none" />
+            </g>
+
+            <!-- Inner Legislative Ring (rotates counter-clockwise) -->
+            <g class="ring-counter" opacity="0.2">
+                <circle cx="400" cy="400" r="180" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="8 8" fill="none" />
+                <!-- Scale or document silhouettes along the inner path -->
+                <text x="527" y="283" font-family="FontAwesome" font-size="14" fill="var(--black)" text-anchor="middle">⚖</text>
+                <text x="527" y="527" font-family="'Outfit', sans-serif" font-weight="800" font-size="14" fill="var(--black)" text-anchor="middle">$</text>
+                <text x="273" y="527" font-family="FontAwesome" font-size="14" fill="var(--black)" text-anchor="middle">⚖</text>
+                <text x="273" y="283" font-family="'Outfit', sans-serif" font-weight="800" font-size="14" fill="var(--black)" text-anchor="middle">$</text>
+                <circle cx="400" cy="400" r="220" stroke="var(--red)" stroke-width="1" stroke-dasharray="2 12" fill="none" />
             </g>
         </svg>
     </div>
-    <header id="navbar">
-        <nav class="container">
-            <div class="logo">
-                <div class="logo-shield">
-                    <span class="stripe black"></span>
-                    <span class="stripe red"></span>
-                    <span class="stripe green"></span>
-                </div>
-                <div class="logo-text">FINANCE BILL <span>2026</span></div>
-            </div>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="analysis.html">Analysis</a></li>
-                <li><a href="comparison.html">Comparison</a></li>
-                <li><a href="impact.html">Key Impacts</a></li>
-            </ul>
-            <button class="cta-btn">Download PDF</button>
-            <div class="menu-toggle" id="mobile-menu">
-                <i class="fas fa-bars"></i>
-            </div>
-        </nav>
-    </header>
+
+    <div id="navbar-placeholder"></div>
 
     <main>
-        <section id="impact" class="impact-section" style="padding-top: 12rem;">
+        <!-- Hero Section with Premium Generated Financial Photo -->
+        <section id="impact-hero" class="hero impact-section" style="padding-bottom: 2rem;">
             <div class="container">
-                <div class="content-split">
+                <div class="hero-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 4rem; align-items: center;">
+                    <div class="hero-text">
+                        <span class="badge">National Review 2026</span>
+                        <h1>Public Impact &amp; <span>Economic Shifts</span></h1>
+                        <p>Analyze how the latest amendments of Kenya's Finance Bill direct resources, adjust daily citizen costs, and realign corporate compliance structures across the country.</p>
+                        <div class="hero-actions">
+                            <a href="#pipeline" class="btn primary">View Pipeline</a>
+                            <a href="#mwananchi" class="btn secondary">View Summary</a>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <div class="image-wrapper" style="border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow);">
+                            <img src="images/kenya_finance_hero.png" alt="Kenya Finance Analysis" style="width: 100%; height: auto; display: block; object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Pocket Tax Pipeline Wireframe Diagram -->
+        <section id="pipeline" class="impact-section section-compact" style="background: rgba(255,255,255,0.2); border-top: 1px solid var(--glass-border);">
+            <div class="container">
+                <div class="section-header">
+                    <span class="badge">Visual Pipeline Diagram</span>
+                    <h2>The Mwananchi <span>Pocket Tax Pipeline</span></h2>
+                    <p style="color: var(--text-main); max-width: 650px; margin: 0 auto;">A modern architectural layout tracing how national policy shifts trickle down to direct expenses in your daily life.</p>
+                </div>
+
+                <div class="pipeline-container">
+                    <!-- Step 1: Policy enactment -->
+                    <div class="pipeline-step red-step">
+                        <div class="pipeline-header">
+                            <h4>1. Policy &amp; Enactment</h4>
+                            <span class="pipeline-num">1</span>
+                        </div>
+                        <p class="pipeline-desc">National assembly passes key amendments (like the 2.5% wealth levies and digital cards WHT classification) to fast-track debt repayments.</p>
+                        <div class="pipeline-impact-val">
+                            <i class="fas fa-landmark"></i> State Revenue Net
+                        </div>
+                    </div>
+
+                    <div class="pipeline-connector"></div>
+
+                    <!-- Step 2: Enforcement & eTIMS -->
+                    <div class="pipeline-step gold-step">
+                        <div class="pipeline-header">
+                            <h4>2. Enforcement &amp; KRA eTIMS</h4>
+                            <span class="pipeline-num">2</span>
+                        </div>
+                        <p class="pipeline-desc">KRA implements automated Digital Compliance, real-time transaction invoicing, and monitors online cellular activations to prevent leakages.</p>
+                        <div class="pipeline-impact-val">
+                            <i class="fas fa-network-wired"></i> Compliance Overhead
+                        </div>
+                    </div>
+
+                    <div class="pipeline-connector"></div>
+
+                    <!-- Step 3: Consumer Pocket -->
+                    <div class="pipeline-step green-step">
+                        <div class="pipeline-header">
+                            <h4>3. Your Pocket Impact</h4>
+                            <span class="pipeline-num">3</span>
+                        </div>
+                        <p class="pipeline-desc">Retail businesses transfer compliance and excise duty overhead directly to consumer pricing, raising everyday food and tech bills.</p>
+                        <div class="pipeline-impact-val">
+                            <i class="fas fa-wallet"></i> Higher Living Costs
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mwananchi Summary & Metric Card Block (Bright & legibile) -->
+        <section id="mwananchi" class="impact-section section-compact" style="background: rgba(255,255,255,0.4); border-top: 1px solid var(--glass-border);">
+            <div class="container">
+                <div class="section-header">
+                    <span class="badge">The Mwananchi Summary</span>
+                    <h2>What This Means <span>For You</span></h2>
+                    <p style="color: var(--text-main);">A quick pocket-level breakdown of the visual tax impacts.</p>
+                </div>
+                <div class="content-split" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 3rem; align-items: start;">
                     <div class="impact-text">
-                        <span class="badge">The Mwananchi Summary</span>
-                        <h2>What This Means <span>For You</span></h2>
                         <div class="impact-items">
-                            
                             <div class="impact-item">
                                 <div class="impact-icon"><i class="fas fa-store"></i></div>
                                 <div class="impact-content">
@@ -91,13 +183,13 @@
                                 <p>Why is the government doing this?</p>
                             </div>
                             <div class="metric-body" style="margin-top: 1.5rem;">
-                                <p style="color: rgba(255, 255, 255, 0.8); font-size: 1rem; line-height: 1.6; margin-bottom: 1rem;">
+                                <p style="color: var(--text-main); font-size: 1rem; line-height: 1.6; margin-bottom: 1rem;">
                                     The government is heavily in debt. To pay off these loans without borrowing more from outside, they are doing what they call <strong>"Fiscal Consolidation."</strong> 
                                 </p>
-                                <p style="color: rgba(255, 255, 255, 0.8); font-size: 1rem; line-height: 1.6;">
+                                <p style="color: var(--text-main); font-size: 1rem; line-height: 1.6;">
                                     In simple terms, instead of just taxing formal salaries, they are now taxing wealth (like cars) and consumption (like bread and plastics) to squeeze more money locally.
                                 </p>
-                                <div class="metric-row" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                                <div class="metric-row" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(0, 0, 0, 0.05);">
                                     <span>Where does the money go?</span>
                                     <strong>Debt Repayment</strong>
                                 </div>
@@ -114,45 +206,52 @@
             </div>
         </section>
 
-        <!-- Tax Legislation & Finance Bill Alignment Update -->
-        <section class="impact-section" style="padding: 5rem 0; background: linear-gradient(135deg, var(--black) 0%, #1E293B 100%); color: white; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <!-- Tax Legislation & Finance Bill Alignment Update (Bright & Cohesive) -->
+        <section id="alignment" class="impact-section section-compact" style="border-top: 1px solid var(--glass-border); text-align: center;">
             <div class="container">
                 <div class="section-header">
-                    <span class="badge" style="background: rgba(255,255,255,0.1); color: white;">Legislative Alignment</span>
-                    <h2 style="color: white; margin-bottom: 3rem;">Tax Legislation &amp; Finance Bill <span>Alignment Update</span></h2>
+                    <span class="badge">Legislative Alignment</span>
+                    <h2>Tax Legislation &amp; Finance Bill <span>Alignment Update</span></h2>
+                    <p style="color: var(--text-main); max-width: 600px; margin: 0 auto 3rem;">Technical review of VAT, Excise Duty, Income Tax, and regulatory amendments.</p>
                 </div>
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; text-align: left;">
 
-                    <div style="background: rgba(255,255,255,0.03); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.3s ease;">
-                        <i class="fas fa-file-invoice-dollar" style="font-size: 2.5rem; color: var(--red); margin-bottom: 1.5rem; display: block;"></i>
-                        <h4 style="color: white; font-size: 1.3rem; margin-bottom: 1rem;">VAT Structural Reclassification</h4>
-                        <p style="color: rgba(255, 255, 255, 0.75); font-size: 1rem; line-height: 1.7;">
-                            Selected products moved from <strong>Zero-Rated</strong> to <strong>Exempt</strong>: mobile telephone handsets, electric motorcycles, electric passenger buses, sugarcane transportation, and solar products. Ordinary bread remains Zero-Rated, protecting retail prices.
-                        </p>
+                    <div class="impact-item">
+                        <div>
+                            <i class="fas fa-file-invoice-dollar" style="font-size: 2.2rem; color: var(--red); margin-bottom: 1.2rem; display: block;"></i>
+                            <h4 style="color: var(--text-heading); font-size: 1.2rem; margin-bottom: 0.8rem;">VAT Structural Reclassification</h4>
+                            <p style="color: var(--text-main); font-size: 0.95rem; line-height: 1.7;">
+                                Selected products moved from <strong>Zero-Rated</strong> to <strong>Exempt</strong>: mobile telephone handsets, electric motorcycles, electric passenger buses, sugarcane transportation, and solar products. Ordinary bread remains Zero-Rated, protecting retail prices.
+                            </p>
+                        </div>
                     </div>
 
-                    <div style="background: rgba(255,255,255,0.03); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.3s ease;">
-                        <i class="fas fa-mobile-alt" style="font-size: 2.5rem; color: var(--green); margin-bottom: 1.5rem; display: block;"></i>
-                        <h4 style="color: white; font-size: 1.3rem; margin-bottom: 1rem;">Excise Duty on Phones</h4>
-                        <p style="color: rgba(255, 255, 255, 0.75); font-size: 1rem; line-height: 1.7;">
-                            Imported cellular phones excise duty increased from <strong>10% to 25%</strong>. Expected to boost local assembly, increase customs revenue, and raise retail prices for imported devices.
-                        </p>
+                    <div class="impact-item">
+                        <div>
+                            <i class="fas fa-mobile-alt" style="font-size: 2.2rem; color: var(--green); margin-bottom: 1.2rem; display: block;"></i>
+                            <h4 style="color: var(--text-heading); font-size: 1.2rem; margin-bottom: 0.8rem;">Excise Duty on Phones</h4>
+                            <p style="color: var(--text-main); font-size: 0.95rem; line-height: 1.7;">
+                                Imported cellular phones excise duty increased from <strong>10% to 25%</strong>. Expected to boost local assembly, increase customs revenue, and raise retail prices for imported devices.
+                            </p>
+                        </div>
                     </div>
 
-                    <div style="background: rgba(255,255,255,0.03); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.3s ease;">
-                        <i class="fas fa-road" style="font-size: 2.5rem; color: #3b82f6; margin-bottom: 1.5rem; display: block;"></i>
-                        <h4 style="color: white; font-size: 1.3rem; margin-bottom: 1rem;">TPA &amp; Road Levy</h4>
-                        <p style="color: rgba(255, 255, 255, 0.75); font-size: 1rem; line-height: 1.7;">
-                            Tax Procedures Act overhauled for enhanced digital compliance and KRA oversight. Road Maintenance Levy reduced to lower fuel pump prices and transport costs for distribution-dependent businesses.
-                        </p>
+                    <div class="impact-item">
+                        <div>
+                            <i class="fas fa-road" style="font-size: 2.2rem; color: #3b82f6; margin-bottom: 1.2rem; display: block;"></i>
+                            <h4 style="color: var(--text-heading); font-size: 1.2rem; margin-bottom: 0.8rem;">TPA &amp; Road Levy</h4>
+                            <p style="color: var(--text-main); font-size: 0.95rem; line-height: 1.7;">
+                                Tax Procedures Act overhauled for enhanced digital compliance and KRA oversight. Road Maintenance Levy reduced to lower fuel pump prices and transport costs for distribution-dependent businesses.
+                            </p>
+                        </div>
                     </div>
 
                 </div>
             </div>
         </section>
 
-        <!-- Existing Sections ... -->
+        <!-- AI Advisor Controls -->
         <div id="ai-advisor" class="ai-bubble">
             <div class="ai-trigger">
                 <i class="fas fa-robot"></i>
@@ -170,9 +269,7 @@
                     <button class="ai-close"><i class="fas fa-times"></i></button>
                 </div>
                 <div class="ai-body" id="ai-chat-body">
-                    <div class="ai-message bot">
-                        Hello! I am your Senior Tax Advisor. I've analyzed the Finance Bill 2025 and the 2026 Proposals. Ask me anything about tax changes, withholding rates, or policy shifts.
-                    </div>
+                    <div class="ai-message bot">Hello! I am your Senior Tax Advisor. I've analyzed the Finance Bill 2025 and the 2026 Proposals. Ask me anything about tax changes, withholding rates, or policy shifts.</div>
                 </div>
                 <div class="ai-footer">
                     <input type="text" id="ai-input" placeholder="Type your question...">
@@ -182,42 +279,11 @@
         </div>
     </main>
 
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-about">
-                    <div class="logo">
-                        <div class="logo-text">FINANCE BILL <span>2026</span></div>
-                    </div>
-                    <p>Independent review and analysis of Kenya's tax policies.</p>
-                </div>
-
-                <div class="footer-social">
-                    <h4>Contributors</h4>
-                    <div class="footer-contributors-grid">
-                        <div class="footer-contributor">
-                            <img src="images/folder/ispeak tech chapter.png" alt="iSpeak Tech Chapter">
-                            <span>iSpeak Tech Chapter</span>
-                            <small>Tech Advocacy & Education</small>
-                        </div>
-                        <div class="footer-contributor">
-                            <img src="images/folder/teklora solutions.png" alt="Teklora Solutions">
-                            <span>Teklora Solutions</span>
-                            <small>Software & Digital Solutions</small>
-                        </div>
-                        <div class="footer-contributor">
-                            <img src="images/folder/TT ARTS.png" alt="TT Arts">
-                            <span>TT Arts</span>
-                            <small>Creative & Design Studio</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <div id="footer-placeholder"></div>
 
     <script src="config.js"></script>
     <script src="knowledge_base.js"></script>
+    <script src="layout.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

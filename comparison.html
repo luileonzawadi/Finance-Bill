@@ -3,63 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Bill 2026 Analysis | Mwananchi Guide</title>
+    <title>Finance Bill 2026 Comparison | Mwananchi Guide</title>
     <meta name="description" content="A simple, clear analysis of the proposed 2026 Finance Bill for the common mwananchi.">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<base target="_blank">
-<base target="_blank">
-<base target="_blank">
 </head>
 <body>
     <div class="national-spirals">
         <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
-            <g fill="none" stroke-width="2" stroke-linecap="round">
-                <path class="spiral s-black" d="M400,400 c10,0 20,10 20,20 c0,20 -30,30 -50,30 c-40,0 -60,-50 -60,-90 c0,-70 70,-110 130,-110 c100,0 160,90 160,180 c0,130 -120,220 -240,220 c-170,0 -290,-150 -290,-310 c0,-210 200,-370 410,-370" />
-                <path class="spiral s-red" d="M400,400 c0,10 10,20 20,20 c20,0 30,-30 30,-50 c0,-40 -50,-60 -90,-60 c-70,0 -110,70 -110,130 c0,100 90,160 180,160 c130,0 220,-120 220,-240 c0,-170 -150,-290 -310,-290 c-210,0 -370,200 -370,410" />
-                <path class="spiral s-green" d="M400,400 c-10,0 -20,-10 -20,-20 c0,-20 30,-30 50,-30 c40,0 60,50 60,90 c0,70 -70,110 -130,110 c-100,0 -160,-90 -160,-180 c0,-130 120,-220 240,-220 c170,0 290,150 290,310 c0,210 -200,370 -410,370" />
+            <!-- Center Shield (symbolic, slow rotation) -->
+            <g class="center-shield">
+                <!-- Crossed spears behind the shield -->
+                <line x1="320" y1="320" x2="480" y2="480" stroke="var(--gold)" stroke-width="4" stroke-linecap="round" opacity="0.4" />
+                <line x1="480" y1="320" x2="320" y2="480" stroke="var(--gold)" stroke-width="4" stroke-linecap="round" opacity="0.4" />
+                
+                <!-- The Kenyan Shield outline -->
+                <path d="M370,350 Q400,320 430,350 Q460,400 430,450 Q400,480 370,450 Q340,400 370,350 Z" fill="var(--red)" stroke="var(--black)" stroke-width="3" />
+                <!-- Black half and green half -->
+                <path d="M370,350 Q400,320 400,320 L400,480 Q400,480 370,450 Q340,400 370,350 Z" fill="var(--black)" />
+                <path d="M430,350 Q400,320 400,320 L400,480 Q400,480 430,450 Q460,400 430,350 Z" fill="var(--green)" />
+                
+                <!-- Gold stripe down the center of the shield -->
+                <line x1="400" y1="325" x2="400" y2="475" stroke="var(--gold)" stroke-width="3" />
+                
+                <!-- Shield interior designs (traditional white circles/dots) -->
+                <circle cx="385" cy="400" r="4" fill="white" />
+                <circle cx="415" cy="400" r="4" fill="white" />
+            </g>
+
+            <!-- Outer Financial Ring (rotates clockwise) -->
+            <g class="ring-clockwise" opacity="0.25">
+                <circle cx="400" cy="400" r="280" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="12 12" fill="none" />
+                <!-- Financial Nodes & Symbols along the ring path -->
+                <text x="680" y="405" font-family="'Outfit', sans-serif" font-weight="800" font-size="16" fill="var(--red)" text-anchor="middle">%</text>
+                <text x="400" y="690" font-family="'Outfit', sans-serif" font-weight="800" font-size="14" fill="var(--green)" text-anchor="middle">Ksh</text>
+                <text x="120" y="405" font-family="'Outfit', sans-serif" font-weight="800" font-size="16" fill="var(--red)" text-anchor="middle">%</text>
+                <text x="400" y="130" font-family="'Outfit', sans-serif" font-weight="800" font-size="14" fill="var(--green)" text-anchor="middle">Ksh</text>
+                <circle cx="400" cy="400" r="320" stroke="var(--black)" stroke-width="1" stroke-dasharray="4 20" fill="none" />
+            </g>
+
+            <!-- Inner Legislative Ring (rotates counter-clockwise) -->
+            <g class="ring-counter" opacity="0.2">
+                <circle cx="400" cy="400" r="180" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="8 8" fill="none" />
+                <!-- Scale or document silhouettes along the inner path -->
+                <text x="527" y="283" font-family="FontAwesome" font-size="14" fill="var(--black)" text-anchor="middle">⚖</text>
+                <text x="527" y="527" font-family="'Outfit', sans-serif" font-weight="800" font-size="14" fill="var(--black)" text-anchor="middle">$</text>
+                <text x="273" y="527" font-family="FontAwesome" font-size="14" fill="var(--black)" text-anchor="middle">⚖</text>
+                <text x="273" y="283" font-family="'Outfit', sans-serif" font-weight="800" font-size="14" fill="var(--black)" text-anchor="middle">$</text>
+                <circle cx="400" cy="400" r="220" stroke="var(--red)" stroke-width="1" stroke-dasharray="2 12" fill="none" />
             </g>
         </svg>
     </div>
-    <header id="navbar">
-        <nav class="container">
-            <div class="logo">
-                <div class="logo-shield">
-                    <span class="stripe black"></span>
-                    <span class="stripe red"></span>
-                    <span class="stripe green"></span>
-                </div>
-                <div class="logo-text">FINANCE BILL <span>2026</span></div>
-            </div>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="analysis.html">Analysis</a></li>
-                <li><a href="comparison.html">Comparison</a></li>
-                <li><a href="impact.html">Key Impacts</a></li>
-                <li><a href="index.html#impact">Key Impacts</a></li>
-            </ul>
-            <a href="index.html" class="cta-btn" style="text-decoration:none;">Back Home</a>
-            <div class="menu-toggle" id="mobile-menu">
-                <i class="fas fa-bars"></i>
-            </div>
-        </nav>
-    </header>
+    <div id="navbar-placeholder"></div>
 
     <main>
         <section class="hero" style="padding-bottom: 2rem;">
-            <div class="container">
-                <div class="section-header">
+            <div class="container hero-content">
+                <div class="hero-text">
                     <span class="badge">Mwananchi Guide</span>
-                    <h2>Proposed 2026 Bill <span>Analysis</span></h2>
-                    <p>What does the proposed Finance Bill of 2026 (Gazette Supplement No. 113) actually mean for the common Mwananchi? Here is a simple, direct breakdown of how it affects your pocket.</p>
+                    <h2>Bill Comparison &amp; <span>Key Changes</span></h2>
+                    <p>How does the 2026 Finance Bill compare to past frameworks? Examine what's newly added, what has been reduced, and what enforcement measures are becoming stricter for taxpayers.</p>
+                    <div class="hero-actions">
+                        <a href="#highlights" class="btn primary">Key Highlights</a>
+                        <a href="#deep-dive" class="btn secondary">Deep Dive</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="image-wrapper" style="border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow);">
+                        <img src="images/kenya_tax_comparison.png" alt="Kenya Tax Comparison" style="width: 100%; height: auto; display: block; object-fit: cover;">
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section class="highlights" style="padding-top: 2rem;">
+        <section id="highlights" class="highlights" style="padding-top: 2rem;">
             <div class="container">
                 <div class="grid">
                     <!-- Motor Vehicle Tax -->
@@ -95,7 +116,7 @@
         </section>
 
         <!-- Deep Dive Legislative Section -->
-        <section class="deep-dive-section" style="padding: 5rem 0; background: rgba(255, 255, 255, 0.4); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); backdrop-filter: blur(10px);">
+        <section id="deep-dive" class="deep-dive-section" style="padding: 5rem 0; background: rgba(255, 255, 255, 0.4); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); backdrop-filter: blur(10px);">
             <div class="container">
                 <div class="section-header">
                     <span class="badge">Official Gazette breakdown</span>
@@ -238,7 +259,7 @@
         </section>
 
         <!-- Simplified Explainer Sections (Merged from Document 4) -->
-        <section class="simplified-explainer" style="padding: 4rem 0; background: rgba(255,255,255,0.3); border-top: 1px solid var(--glass-border);">
+        <section class="simplified-explainer section-compact" style="background: rgba(255,255,255,0.3); border-top: 1px solid var(--glass-border);">
             <div class="container">
                 <div class="section-header">
                     <span class="badge">Simplified Guide</span>
@@ -251,7 +272,7 @@
                     <span class="badge" style="margin-bottom: 1rem; display: inline-block;">Overview</span>
                     <h3 style="font-size: 1.5rem; color: var(--black); margin-bottom: 1rem;">What Changed Between 2025 and 2026?</h3>
                     <p style="margin-bottom: 1rem;">Finance Bill 2025 introduced major tax reforms in Kenya. Finance Bill 2026 focused on enforcing those reforms more aggressively.</p>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem;">
                         <div style="background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px;">
                             <strong style="color: var(--black);">Finance Bill 2025</strong>
                             <ul style="margin-top: 0.5rem; padding-left: 1.2rem; font-size: 0.9rem;">
@@ -428,7 +449,7 @@
         </section>
 
         <!-- Tax Legislation & Finance Bill Alignment Update -->
-        <section class="simplified-explainer" style="padding: 4rem 0; background: rgba(255,255,255,0.3); border-top: 1px solid var(--glass-border);">
+        <section class="simplified-explainer section-compact" style="background: rgba(255,255,255,0.3); border-top: 1px solid var(--glass-border);">
             <div class="container">
                 <div class="section-header">
                     <span class="badge">Legislative Alignment</span>
@@ -519,7 +540,7 @@
         </section>
 
                 <!-- Contributors Section -->
-        <section class="contributors-section" style="padding: 4rem 0; background: rgba(255,255,255,0.3); border-top: 1px solid var(--glass-border);">
+        <section class="contributors-section section-compact" style="background: rgba(255,255,255,0.3); border-top: 1px solid var(--glass-border);">
             <div class="container">
                 <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
                     <span class="badge">Partners</span>
@@ -561,39 +582,7 @@
 
     </main>
 
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-about">
-                    <div class="logo">
-                        <div class="logo-text">FINANCE BILL <span>2026</span></div>
-                    </div>
-                    <p>Independent review and analysis of Kenya's tax policies.</p>
-                </div>
-
-                <div class="footer-social">
-                    <h4>Contributors</h4>
-                    <div class="footer-contributors-grid">
-                        <div class="footer-contributor">
-                            <img src="images/folder/ispeak tech chapter.png" alt="iSpeak Tech Chapter">
-                            <span>iSpeak Tech Chapter</span>
-                            <small>Tech Advocacy & Education</small>
-                        </div>
-                        <div class="footer-contributor">
-                            <img src="images/folder/teklora solutions.png" alt="Teklora Solutions">
-                            <span>Teklora Solutions</span>
-                            <small>Software & Digital Solutions</small>
-                        </div>
-                        <div class="footer-contributor">
-                            <img src="images/folder/TT ARTS.png" alt="TT Arts">
-                            <span>TT Arts</span>
-                            <small>Creative & Design Studio</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <div id="footer-placeholder"></div>
 
     <!-- AI Advisor Component -->
     <div id="ai-advisor" class="ai-bubble">
@@ -621,6 +610,7 @@
 
     <script src="config.js"></script>
     <script src="knowledge_base.js"></script>
+    <script src="layout.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

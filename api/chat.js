@@ -1,49 +1,96 @@
-module.exports = async function(req, res) {
+module.exports = async function (req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
     try {
-        const { userInput, context } = req.body;
-        const apiKey = process.env.GROQ_API_KEY;
-
-        if (!apiKey) {
-            return res.status(500).json({ error: "API key not configured in Vercel Environment Variables. Please set GROQ_API_KEY." });
+        const { messages, context } = req.body;
+        
+        // Gather all available API keys
+        let keys = [];
+        if (process.env.GROQ_API_KEY) {
+            keys.push(process.env.GROQ_API_KEY.trim());
+        }
+        if (process.env.GROQ_API_KEYS) {
+            const additionalKeys = process.env.GROQ_API_KEYS.split(',')
+                .map(k => k.trim())
+                .filter(Boolean);
+            keys.push(...additionalKeys);
         }
 
-        const systemPrompt = `ROLE: Senior Tax Advisor & Mwananchi Advocate. TASK: Analyze Kenya Finance Bill 2025/2026. Explain things simply. You must understand Swahili, Sheng, and English. 
-        CRITICAL RULES:
-        1. LANGUAGE CONSTISTENCY: Match the language of the user's question exactly. If the user asks in English, you MUST reply ONLY in English. If the user asks in Swahili or Sheng, you MUST reply ONLY in Swahili or Sheng. Never reply in Swahili if the question was asked in English.
-        2. NO INTRODUCTIONS: Do NOT introduce yourself, say hello, or state that you are the Finance Bill Advisor. Jump straight into answering the user's question directly.
-        3. SIMPLICITY & EXPLICIT DETAIL: Provide explicit, highly detailed, and complete explanations. Do not skip important numbers, rates, limits, penalties, or critical context. Breakdown complex tax terms into simple, relatable Kenyan examples so the common citizen gets the full, explicit picture.`;
-        
+        // Deduplicate keys
+        keys = [...new Set(keys)];
+
+        if (keys.length === 0) {
+            return res.status(500).json({ error: "API key not configured in Environment Variables. Please set GROQ_API_KEY or GROQ_API_KEYS in .env." });
+        }
+
+        const systemPrompt = `You are a highly accurate, objective Kenyan Finance Bill AI Advisor. Your absolute priority is accuracy and truth.
+Your knowledge base is strictly limited to the provided GROUND TRUTH CONTEXT.
+
+GROUND TRUTH CONTEXT:
+${context}
+
+CRITICAL INSTRUCTIONS:
+1. STRICT TOPIC GUARD: You MUST ONLY answer questions directly related to Kenya's economy, taxes, fiscal policy, or the Finance Bills (2025 and 2026).
+   If the user asks an off-topic question (anything unrelated to economy, taxes, or the Finance Bill, such as general advice, history of other topics, programming, creative writing, science, etc.), you MUST reply with this exact message:
+   "I can only answer questions related to the Kenyan Finance Bill, taxes, and the economy. Please ask a question related to these topics."
+2. NO HALLUCINATIONS: Do not invent, extrapolate, or assume any information, tax rates, rates, timelines, or provisions not explicitly mentioned in the GROUND TRUTH CONTEXT. If the context does not contain the answer, you must state: "I cannot find that information in the official 2025/2026 Finance Bill documents."
+3. STRAIGHT TO THE POINT: Be concise, direct, and factual. Do not say "Based on the context" or "Hello, as an AI..." or give any introductions. Provide the numbers and answers immediately.
+4. ACCURACY IS PARAMOUNT: Statically compare 2025 and 2026 ONLY when the user explicitly asks for comparison. Use 2026 as the default for current questions.
+5. MEMORY AND CONTINUITY: You will receive the conversation history. Review past exchanges to maintain continuity, identify references (like "what about that first tax?"), and build upon previous answers without repeating introductory text.
+6. LANGUAGE: Match the language of the user's question exactly (English, Swahili, or Sheng).`;
+
+        const chatHistory = Array.isArray(messages) ? messages : [];
+        const completionMessages = [
+            { role: 'system', content: systemPrompt },
+            ...chatHistory
+        ];
+
         // Use Groq's chat completions endpoint (OpenAI compatible)
         const url = 'https://api.groq.com/openai/v1/chat/completions';
-        
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey.trim()}`
-            },
-            body: JSON.stringify({
-                model: 'llama3-8b-8192',
-                messages: [
-                    { role: 'system', content: systemPrompt },
-                    { role: 'user', content: `CONTEXT: ${context}\n\nUSER: ${userInput}` }
-                ],
-                temperature: 0.1,
-                max_tokens: 1500
-            })
-        });
 
-        const data = await response.json();
+        let lastError = null;
+        let successResponse = null;
 
-        if (response.ok) {
-            let text = data.choices[0].message.content;
-            return res.status(200).json({ response: text });
+        // Try keys sequentially until one succeeds
+        for (let i = 0; i < keys.length; i++) {
+            const currentKey = keys[i];
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'llama3-8b-8192',
+                        messages: completionMessages,
+                        temperature: 0.1,
+                        max_tokens: 1000
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    successResponse = data.choices[0].message.content;
+                    break; // Success! Exit the key loop
+                } else {
+                    const errMsg = data.error ? data.error.message : `API returned ${response.status}`;
+                    console.warn(`API key index ${i} failed: ${errMsg}`);
+                    lastError = new Error(errMsg);
+                }
+            } catch (err) {
+                console.warn(`Connection failed with API key index ${i}: ${err.message}`);
+                lastError = err;
+            }
+        }
+
+        if (successResponse !== null) {
+            return res.status(200).json({ response: successResponse });
         } else {
-            throw new Error(data.error ? data.error.message : `API returned ${response.status}`);
+            throw lastError || new Error("All configured API keys failed to return a response.");
         }
     } catch (error) {
         console.error('Serverless Function Error:', error);

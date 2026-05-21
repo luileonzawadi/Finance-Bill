@@ -59,19 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
         revealObserver.observe(el);
     });
 
-    // Hover Magnets for Cards
-    document.querySelectorAll('.card, .metric-card, .comparison-table .row').forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            if (window.innerWidth < 1024) return;
-            const rect = card.getBoundingClientRect();
-            const rotateX = (e.clientY - rect.top - rect.height / 2) / 20;
-            const rotateY = (rect.width / 2 - (e.clientX - rect.left)) / 20;
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px)`;
-        });
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
-        });
-    });
 
     // AI Advisor UI Controls
     const aiAdvisor = document.getElementById('ai-advisor');
@@ -80,6 +67,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const aiSend = document.getElementById('ai-send');
     const aiInput = document.getElementById('ai-input');
     const aiChatBody = document.getElementById('ai-chat-body');
+    let chatHistory = [];
+
+    // Try loading chat history from sessionStorage
+    try {
+        const storedHistory = sessionStorage.getItem('finance_bill_chat_history');
+        if (storedHistory) {
+            chatHistory = JSON.parse(storedHistory) || [];
+        }
+    } catch (e) {
+        console.error("Failed to load chat history", e);
+    }
+
+    const saveHistory = () => {
+        try {
+            sessionStorage.setItem('finance_bill_chat_history', JSON.stringify(chatHistory));
+        } catch (e) {
+            console.error("Failed to save chat history", e);
+        }
+    };
 
     if (aiTrigger) {
         aiTrigger.addEventListener('click', () => {
@@ -97,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addMessage = (text, type) => {
         const msg = document.createElement('div');
         msg.className = `ai-message ${type}`;
-        if (type === 'bot') {
+        if (type === 'bot' || type === 'assistant') {
             msg.innerHTML = text;
         } else {
             msg.textContent = text;
@@ -105,6 +111,15 @@ document.addEventListener('DOMContentLoaded', () => {
         aiChatBody.appendChild(msg);
         aiChatBody.scrollTop = aiChatBody.scrollHeight;
     };
+
+    // Render stored chat history if present
+    if (chatHistory && chatHistory.length > 0 && aiChatBody) {
+        aiChatBody.innerHTML = ''; // Clear default greeting to avoid repetition
+        chatHistory.forEach(msg => {
+            const roleType = (msg.role === 'assistant' || msg.role === 'bot') ? 'bot' : 'user';
+            addMessage(msg.content, roleType);
+        });
+    }
 
     const simulateResponse = (text) => {
         const botResponses = [
@@ -129,15 +144,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             }
         }
+        
+        // Save response to history
+        chatHistory.push({ role: 'assistant', content: response });
+        saveHistory();
+
         addMessage(response, 'bot');
     };
 
     const handleAISend = async () => {
-        const text = aiInput.value.trim().toLowerCase();
-        if (!text) return;
+        const rawText = aiInput.value.trim();
+        if (!rawText) return;
 
-        addMessage(aiInput.value, 'user');
+        addMessage(rawText, 'user');
         aiInput.value = '';
+
+        // Add user message to conversation history
+        chatHistory.push({ role: 'user', content: rawText });
+
+        // Maintain context length (keep only the last 10 messages)
+        if (chatHistory.length > 10) {
+            chatHistory = chatHistory.slice(-10);
+        }
+        saveHistory();
 
         const typing = document.createElement('div');
         typing.className = 'ai-message bot';
@@ -148,19 +177,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (config && config.isLive) {
             try {
-                const aiResponse = await config.call(text, FINANCE_BILL_CONTEXT);
+                const aiResponse = await config.call(chatHistory, FINANCE_BILL_CONTEXT);
                 typing.remove();
+                
+                // Add bot response to conversation history
+                chatHistory.push({ role: 'assistant', content: aiResponse });
+                saveHistory();
+                
                 addMessage(aiResponse, 'bot');
             } catch (error) {
                 console.error("AI Error:", error);
                 typing.remove();
                 addMessage('Live Intelligence Error: Unable to fetch live data. Using offline analysis...', 'bot');
-                setTimeout(() => simulateResponse(text), 1500);
+                setTimeout(() => simulateResponse(rawText.toLowerCase()), 1500);
             }
         } else {
             setTimeout(() => {
                 typing.remove();
-                simulateResponse(text);
+                simulateResponse(rawText.toLowerCase());
             }, 1500);
         }
     };
@@ -180,9 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
             opacity: 1;
             transform: translateY(0);
         }
-        .card, .metric-card, .comparison-table .row {
-            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
-        }
+
     `;
     document.head.appendChild(style);
 });

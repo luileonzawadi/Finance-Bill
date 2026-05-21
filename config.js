@@ -6,14 +6,14 @@
 var AI_CONFIG = {
     isLive: true,
     
-    async call(userInput, context) {
+    async call(messages, context) {
         if (!this.isLive) throw new Error("AI not configured.");
 
         try {
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userInput, context })
+                body: JSON.stringify({ messages, context })
             });
 
             const data = await response.json();
