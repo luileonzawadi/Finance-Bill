@@ -10,7 +10,7 @@ app = FastAPI()
 # -------------------------------------------------
 # Load data – executed once per cold start
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-DATA_PATH = os.path.join(BASE_DIR, "data", "Finance_Bill_2026.txt")
+DATA_PATH = os.path.join(BASE_DIR, "Finance_Bill_2026.txt")
 
 with open(DATA_PATH, "r", encoding="utf-8") as f:
     RAW_TEXT = f.read()
