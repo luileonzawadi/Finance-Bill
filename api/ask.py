@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
-
+from groq import Groq
 app = FastAPI()
 
 # -------------------------------------------------
@@ -43,7 +43,37 @@ async def ask(request: Request):
 
     matches = best_match(query, top_k=3)
     best_idx, best_para, confidence = matches[0]
-    answer = best_para
+
+    # Use Groq to explain the text with examples
+    groq_api_key = os.environ.get("GROQ_API_KEY")
+    if groq_api_key:
+        try:
+            client = Groq(api_key=groq_api_key)
+            prompt = f"""You are a helpful assistant explaining the Kenya Finance Bill 2026.
+Based on the following exact text from the bill, provide an explanation.
+
+Rules:
+1. First, quote the relevant text exactly as it is.
+2. Then, explain what it means using simple, practical examples.
+3. Arrange your detailed response in clear paragraphs.
+4. STRICTLY do not include any information or rules that are not in the provided text.
+
+Text from the bill:
+{best_para}
+
+Question:
+{query}
+"""
+            completion = client.chat.completions.create(
+                model="llama3-8b-8192",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.3,
+            )
+            answer = completion.choices[0].message.content
+        except Exception as e:
+            answer = f"{best_para}\n\n(Error connecting to AI for explanation: {str(e)})"
+    else:
+        answer = f"{best_para}\n\n(Note: Set GROQ_API_KEY in Vercel to get detailed explanations and examples)"
 
     return JSONResponse({
         "answer": answer,
