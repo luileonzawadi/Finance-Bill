@@ -361,7 +361,7 @@ nav {
 
 .icon-box {
     font-size: 2.5rem;
-    color: var(--red);
+    color: var(--black);
     margin-bottom: 2rem;
 }
 
@@ -782,7 +782,7 @@ footer::before {
 
 .footer-grid {
     display: grid;
-    grid-template-columns: 1.2fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 3rem;
     padding-bottom: 3rem;
     align-items: start;
@@ -930,7 +930,7 @@ footer::before {
 
 .ai-trigger:hover {
     transform: scale(1.05) translateY(-5px);
-    background: var(--red);
+    background: #1e293b; /* lighter black/slate on hover */
 }
 
 .ai-trigger i { font-size: 1.2rem; }
@@ -968,6 +968,8 @@ footer::before {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
 }
 
 .ai-status {
@@ -1018,10 +1020,13 @@ footer::before {
 }
 
 .ai-message.bot {
-    background: white;
+    background: rgba(255,255,255,0.9);
     color: var(--text-heading);
     align-self: flex-start;
     border-bottom-left-radius: 4px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .ai-message.user {
@@ -1029,32 +1034,60 @@ footer::before {
     color: white;
     align-self: flex-end;
     border-bottom-right-radius: 4px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-.ai-footer {
-    padding: 1rem;
-    background: rgba(255,255,255,0.5);
-    display: flex;
-    gap: 10px;
-}
+    .ai-footer {
+        padding: 1rem;
+        background: var(--glass);
+        backdrop-filter: blur(12px);
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--shadow);
+    }
 
-.ai-footer input {
+.ai-footer input,
+.ai-footer textarea {
     flex: 1;
     padding: 0.8rem 1.2rem;
     border-radius: 50px;
     border: 1px solid rgba(0,0,0,0.1);
     font-size: 0.9rem;
+    background: rgba(255,255,255,0.8);
+    color: var(--text-heading);
+    resize: none;
+    overflow-y: auto;
+    min-height: 2.5rem;
+    line-height: 1.4;
+}
+.ai-footer textarea::placeholder {
+    color: var(--text-muted);
+    opacity: 0.7;
 }
 
 .ai-footer button {
     width: 40px;
     height: 40px;
-    background: var(--red);
+    background: var(--black);
     color: white;
     border: none;
     border-radius: 50%;
     cursor: pointer;
     transition: var(--transition);
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ai-footer button:hover {
+    background: #1e293b;
+    transform: scale(1.1);
 }
 
 /* AI Engine Dashboard Visuals */

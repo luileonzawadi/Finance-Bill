@@ -1,5 +1,8 @@
-# Configuration Files (Sensitive Data)
-
-# OS Files
+.venv/
+__pycache__/
+*.pyc
 .DS_Store
-Thumbs.db
+.env
+.idea/
+.vscode/
+*.log
