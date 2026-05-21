@@ -49,7 +49,7 @@ Do NOT add any information not present in the paragraph.
 
 Paragraph:\n{best_para}\n\nQuestion: {query}\n"""
         completion = client.chat.completions.create(
-            model="llama3-8b-8192",
+            model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
         )
