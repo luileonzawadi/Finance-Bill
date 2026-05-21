@@ -10,5 +10,4 @@ dependencies = [
     "groq",
 ]
 
-[tool.vercel]
-entrypoint = "api.ask:app"
+

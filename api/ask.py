@@ -24,7 +24,12 @@ def keyword_search(query: str) -> str:
             return para
     return PARAGRAPHS[0] if PARAGRAPHS else ""
 
+@app.get("/")
+async def health_check():
+    return {"status": "ok", "message": "FastAPI is running"}
+
 @app.post("/api/ask")
+@app.post("/")
 async def ask(request: Request):
     payload = await request.json()
     query = payload.get("query", "").strip()
