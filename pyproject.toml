@@ -1,2 +1,17 @@
+[project]
+name = "finance-bill-qa"
+version = "0.1.0"
+description = "Backend for Finance Bill 2026 QA"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi==0.110.0",
+    "uvicorn[standard]==0.29.0",
+    "python-multipart==0.0.9",
+    "sentence-transformers==2.2.2",
+    "scikit-learn==1.4.2",
+    "PyPDF2==3.0.1",
+    "groq"
+]
+
 [tool.vercel]
 entrypoint = "api.ask:app"
