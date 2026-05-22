@@ -46,9 +46,7 @@
     }
 
     // Resolve the layout path relative to root (works from any subdirectory depth)
-    var base = document.currentScript
-        ? document.currentScript.src.replace(/layout\.js$/, '')
-        : '/';
+    const base = '/';
 
     document.addEventListener('DOMContentLoaded', function () {
         loadLayout('navbar-placeholder', base + 'layout/navbar.html');

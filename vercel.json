@@ -8,7 +8,8 @@
     { "src": "config.js", "use": "@vercel/static" },
     { "src": "knowledge_base.js", "use": "@vercel/static" },
     { "src": "images/**", "use": "@vercel/static" },
-    { "src": "*.html", "use": "@vercel/static" }
+    { "src": "*.html", "use": "@vercel/static" },
+    { "src": "layout/**", "use": "@vercel/static" },
   ],
   "routes": [
     {

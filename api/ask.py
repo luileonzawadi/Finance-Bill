@@ -1,8 +1,11 @@
 import os
 import re
+from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from groq import Groq
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -38,23 +41,44 @@ async def ask(request: Request):
 
     best_para = keyword_search(query)
 
-    # Use Groq to explain with examples
-    groq_api_key = os.getenv("GROQ_API_KEY")
-    if groq_api_key:
-        client = Groq(api_key=groq_api_key)
+    # Use Groq to explain with examples, rotating keys when rate limits or key failures occur.
+    keys = []
+    primary_key = os.getenv("GROQ_API_KEY")
+    if primary_key:
+        keys.append(primary_key.strip())
+    additional_keys = os.getenv("GROQ_API_KEYS", "")
+    if additional_keys:
+        keys.extend([k.strip() for k in additional_keys.split(",") if k.strip()])
+    keys = list(dict.fromkeys(keys))
+
+    if keys:
         prompt = f"""You are a helpful assistant explaining the Kenya Finance Bill 2026.
 Provide an explanation of the following exact paragraph, then give a short practical example.
 Quote the paragraph exactly, then explain in clear paragraphs.
 Do NOT add any information not present in the paragraph.
 
 Paragraph:\n{best_para}\n\nQuestion: {query}\n"""
-        completion = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.3,
-        )
-        answer = completion.choices[0].message.content
+        last_error = None
+        answer = None
+
+        for groq_api_key in keys:
+            try:
+                client = Groq(api_key=groq_api_key)
+                completion = client.chat.completions.create(
+                    model="llama-3.3-70b-versatile",
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=0.3,
+                )
+                answer = completion.choices[0].message.content
+                break
+            except Exception as err:
+                last_error = err
+                # Try the next key if this one fails.
+                continue
+
+        if answer is None:
+            answer = f"{best_para}\n\n(Note: Groq API call failed for all configured keys. Last error: {getattr(last_error, 'message', str(last_error))})"
     else:
-        answer = f"{best_para}\n\n(Note: Set GROQ_API_KEY environment variable to get detailed explanation.)"
+        answer = f"{best_para}\n\n(Note: Set GROQ_API_KEY or GROQ_API_KEYS environment variable to get detailed explanation.)"
 
     return JSONResponse({"answer": answer})
