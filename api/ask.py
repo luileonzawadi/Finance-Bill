@@ -6,38 +6,73 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from groq import Groq
 from langgraph.graph import StateGraph, END
+import chromadb
+from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 
 load_dotenv()
 
 app = FastAPI()
 
 # ─────────────────────────────────────────
-# KNOWLEDGE BASE (Finance Bill 2026)
+# LOAD CHROMADB RAG INDEX
 # ─────────────────────────────────────────
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-DATA_PATH = os.path.join(BASE_DIR, "Finance_Bill_2026.txt")
-with open(DATA_PATH, "r", encoding="utf-8") as f:
-    RAW_TEXT = f.read()
+INDEX_DIR = os.path.join(BASE_DIR, "chroma_index")
 
-PARAGRAPHS = [p.strip() for p in RAW_TEXT.split("\n\n") if p.strip()]
+_collection = None
+
+def get_collection():
+    global _collection
+    if _collection is None:
+        ef = SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
+        client = chromadb.PersistentClient(path=INDEX_DIR)
+        # Build index if it doesn't exist
+        existing = [c.name for c in client.list_collections()]
+        if "finance_bill_2026" not in existing:
+            _build_index(client, ef)
+        _collection = client.get_collection(
+            name="finance_bill_2026",
+            embedding_function=ef
+        )
+    return _collection
+
+def _build_index(client, ef):
+    text_path = os.path.join(BASE_DIR, "Finance_Bill_2026.txt")
+    with open(text_path, "r", encoding="utf-8") as f:
+        raw = f.read()
+    raw = re.sub(r"\n{3,}", "\n\n", raw)
+    raw = re.sub(r"[ \t]+", " ", raw)
+    words = raw.split()
+    chunks, i = [], 0
+    while i < len(words):
+        chunks.append(" ".join(words[i:i+400]))
+        i += 320
+    collection = client.create_collection(
+        name="finance_bill_2026",
+        embedding_function=ef,
+        metadata={"hnsw:space": "cosine"}
+    )
+    for i in range(0, len(chunks), 100):
+        batch = chunks[i:i+100]
+        collection.add(documents=batch, ids=[f"chunk_{i+j}" for j in range(len(batch))])
 
 # ─────────────────────────────────────────
-# TOPIC CLASSIFICATION MAP
+# TOPIC CLASSIFICATION
 # ─────────────────────────────────────────
 TOPIC_KEYWORDS = {
     "income_tax": [
         "income tax", "paye", "salary", "employment", "gratuity", "pension",
         "withholding", "royalty", "management fee", "professional fee",
-        "motor vehicle tax", "non-resident", "resident", "benefit", "threshold",
+        "motor vehicle tax", "non-resident", "benefit", "threshold",
         "housing loan", "scrap metal", "winnings", "betting", "gambling",
         "digital content", "content creator", "youtube", "tiktok", "influencer",
-        "shipping", "trust", "dividend", "interest", "capital gains"
+        "shipping", "trust", "dividend", "interest", "capital gains", "instalment tax"
     ],
     "vat": [
         "vat", "value added tax", "zero rated", "exempt", "standard rated",
         "bread", "electric bus", "solar", "motorcycle", "mobile phone",
         "handset", "sugarcane", "financial services", "payment gateway",
-        "merchant", "input tax", "taxable supply"
+        "merchant", "input tax", "taxable supply", "zero-rated"
     ],
     "excise_duty": [
         "excise", "excise duty", "imported phone", "cellular", "tobacco",
@@ -49,8 +84,8 @@ TOPIC_KEYWORDS = {
         "tax procedures", "etims", "electronic invoice", "pin", "registration",
         "deregistration", "penalty", "interest", "amnesty", "refund",
         "overpayment", "objection", "appeal", "audit", "assessment",
-        "virtual asset service provider", "langgraph", "prepopulated return",
-        "tax avoidance", "scheme", "kra", "commissioner"
+        "virtual asset service provider", "prepopulated return",
+        "tax avoidance", "scheme", "kra", "commissioner", "compliance"
     ],
     "miscellaneous": [
         "import declaration", "idf", "railway development levy", "rdl",
@@ -69,20 +104,47 @@ def classify_topic(query: str) -> str:
     best = max(scores, key=scores.get)
     return best if scores[best] > 0 else "general"
 
+def is_out_of_scope(query: str, topic: str) -> bool:
+    if topic != "general":
+        return False
+    finance_keywords = [
+        "finance bill", "tax", "kenya", "kra", "levy", "duty", "vat",
+        "income", "excise", "bill", "2026", "act", "parliament"
+    ]
+    return not any(kw in query.lower() for kw in finance_keywords)
+
 # ─────────────────────────────────────────
-# CONTEXT RETRIEVAL
+# RAG RETRIEVAL
 # ─────────────────────────────────────────
-def retrieve_context(query: str, topic: str) -> str:
-    tokens = re.findall(r"\w+", query.lower())
-    scored = []
-    for para in PARAGRAPHS:
-        lowered = para.lower()
-        score = sum(1 for tok in tokens if tok in lowered)
-        if score > 0:
-            scored.append((score, para))
-    scored.sort(key=lambda x: x[0], reverse=True)
-    top = [p for _, p in scored[:5]]
-    return "\n\n".join(top) if top else (PARAGRAPHS[0] if PARAGRAPHS else "")
+def retrieve_context(query: str, n_results: int = 6) -> str:
+    try:
+        collection = get_collection()
+        results = collection.query(
+            query_texts=[query],
+            n_results=n_results
+        )
+        docs = results["documents"][0] if results["documents"] else []
+        return "\n\n---\n\n".join(docs)
+    except Exception as e:
+        # Fallback to keyword search if ChromaDB fails
+        return fallback_keyword_search(query)
+
+def fallback_keyword_search(query: str) -> str:
+    try:
+        text_path = os.path.join(BASE_DIR, "Finance_Bill_2026.txt")
+        with open(text_path, "r", encoding="utf-8") as f:
+            raw = f.read()
+        paragraphs = [p.strip() for p in raw.split("\n\n") if p.strip()]
+        tokens = re.findall(r"\w+", query.lower())
+        scored = []
+        for para in paragraphs:
+            score = sum(1 for tok in tokens if tok in para.lower())
+            if score > 0:
+                scored.append((score, para))
+        scored.sort(key=lambda x: x[0], reverse=True)
+        return "\n\n".join(p for _, p in scored[:5])
+    except Exception:
+        return "Finance Bill 2026 context unavailable."
 
 # ─────────────────────────────────────────
 # GROQ CLIENT
@@ -100,7 +162,7 @@ def get_groq_keys():
 def call_groq(prompt: str) -> str:
     keys = get_groq_keys()
     if not keys:
-        return "GROQ_API_KEY is not set. Please configure it in Vercel environment variables."
+        return "GROQ_API_KEY is not configured. Please set it in Vercel environment variables."
     last_error = None
     for key in keys:
         try:
@@ -109,7 +171,7 @@ def call_groq(prompt: str) -> str:
                 model="llama-3.3-70b-versatile",
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.2,
-                max_tokens=1024,
+                max_tokens=1200,
             )
             return completion.choices[0].message.content
         except Exception as e:
@@ -125,30 +187,27 @@ class AgentState(TypedDict):
     topic: str
     context: str
     answer: str
-    is_out_of_scope: bool
+    out_of_scope: bool
 
 # ─────────────────────────────────────────
 # LANGGRAPH NODES
 # ─────────────────────────────────────────
 def node_classify(state: AgentState) -> AgentState:
     topic = classify_topic(state["query"])
-    out_of_scope = topic == "general" and not any(
-        kw in state["query"].lower()
-        for kw in ["finance bill", "tax", "kenya", "kra", "levy", "duty", "vat"]
-    )
-    return {**state, "topic": topic, "is_out_of_scope": out_of_scope}
+    out_of_scope = is_out_of_scope(state["query"], topic)
+    return {**state, "topic": topic, "out_of_scope": out_of_scope}
 
 def node_retrieve(state: AgentState) -> AgentState:
-    context = retrieve_context(state["query"], state["topic"])
+    context = retrieve_context(state["query"])
     return {**state, "context": context}
 
 def node_reason(state: AgentState) -> AgentState:
     topic_labels = {
-        "income_tax": "Income Tax Act",
+        "income_tax": "Income Tax Act (Cap. 470)",
         "vat": "Value Added Tax Act",
         "excise_duty": "Excise Duty Act",
         "tax_procedures": "Tax Procedures Act",
-        "miscellaneous": "Miscellaneous Fees and Levies / Road Maintenance Levy",
+        "miscellaneous": "Miscellaneous Fees, Levies and Road Maintenance",
         "general": "Finance Bill 2026"
     }
     topic_label = topic_labels.get(state["topic"], "Finance Bill 2026")
@@ -156,45 +215,48 @@ def node_reason(state: AgentState) -> AgentState:
     prompt = f"""You are a Senior Tax Advisor specializing in the Kenya Finance Bill 2026.
 
 STRICT RULES:
-1. Answer ONLY based on the Finance Bill 2026 context provided below.
-2. Do NOT use asterisks (*), hash symbols (#), or markdown formatting.
-3. Use plain paragraphs. If listing items, use numbers like 1. 2. 3.
-4. If a point is important, write it in CAPITAL LETTERS instead of bold.
-5. Be specific — quote exact rates, section numbers, and amounts from the context.
+1. Answer ONLY using the context provided below from the Finance Bill 2026.
+2. Do NOT use asterisks (*), hash symbols (#), or any markdown formatting.
+3. Write in plain paragraphs. For lists use numbers: 1. 2. 3.
+4. For important points write them in CAPITAL LETTERS.
+5. Quote exact rates, section numbers, and amounts from the context.
 6. Explain in simple terms relatable to ordinary Kenyans (matatu, duka, boda boda, mama mboga).
-7. Match the language of the question — if asked in Swahili or Sheng, reply in that language.
-8. Do NOT mention the Finance Bill 2025 unless explicitly asked.
-9. IMPORTANT: Bread REMAINS ZERO-RATED under the Finance Bill 2026. It will NOT increase in price due to VAT.
+7. Match the language of the question. If asked in Swahili or Sheng, reply in that language.
+8. CRITICAL: Bread REMAINS ZERO-RATED under the Finance Bill 2026. It will NOT increase in price.
+9. If the context does not contain enough information to answer, say so honestly.
 
 Topic Area: {topic_label}
 
-Relevant Context from Finance Bill 2026:
+Relevant Context from Finance Bill 2026 (retrieved via semantic search):
 {state["context"]}
 
 User Question: {state["query"]}
 
 Answer:"""
 
-    answer = call_groq(prompt)
-    # Clean up any remaining markdown
-    answer = re.sub(r"#{1,6}\s*", "", answer)
-    answer = re.sub(r"\*\*(.*?)\*\*", r"\1", answer)
-    answer = re.sub(r"\*(.*?)\*", r"\1", answer)
-    answer = re.sub(r" {2,}", " ", answer)
-    return {**state, "answer": answer.strip()}
+    raw = call_groq(prompt)
+
+    # Strip all markdown
+    clean = re.sub(r"#{1,6}\s*", "", raw)
+    clean = re.sub(r"\*\*(.*?)\*\*", r"\1", clean)
+    clean = re.sub(r"\*(.*?)\*", r"\1", clean)
+    clean = re.sub(r"`{1,3}", "", clean)
+    clean = re.sub(r" {2,}", " ", clean)
+
+    return {**state, "answer": clean.strip()}
 
 def node_fallback(state: AgentState) -> AgentState:
     answer = (
-        "That question appears to be outside the scope of the Finance Bill 2026. "
-        "I can only answer questions about the Kenya Finance Bill 2026, including income tax changes, "
-        "VAT amendments, excise duty, motor vehicle tax, eco levy, digital services tax, "
+        "That question is outside the scope of the Finance Bill 2026. "
+        "I can only answer questions about the Kenya Finance Bill 2026 — income tax, "
+        "VAT, excise duty, motor vehicle tax, eco levy, digital services tax, "
         "and tax procedures. For other matters, please consult KRA at www.kra.go.ke "
         "or a qualified tax professional."
     )
     return {**state, "answer": answer}
 
 def route_after_classify(state: AgentState) -> str:
-    return "fallback" if state["is_out_of_scope"] else "retrieve"
+    return "fallback" if state["out_of_scope"] else "retrieve"
 
 # ─────────────────────────────────────────
 # BUILD LANGGRAPH
@@ -220,8 +282,8 @@ agent = workflow.compile()
 # FASTAPI ENDPOINTS
 # ─────────────────────────────────────────
 @app.get("/")
-async def health_check():
-    return {"status": "ok", "message": "Finance Bill 2026 LangGraph Agent is running"}
+async def health():
+    return {"status": "ok", "message": "Finance Bill 2026 RAG Agent running"}
 
 @app.post("/api/ask")
 @app.post("/")
@@ -229,15 +291,14 @@ async def ask(request: Request):
     payload = await request.json()
     query = payload.get("query", "").strip()
     if not query:
-        return JSONResponse({"error": "Missing `query` field"}, status_code=400)
+        return JSONResponse({"error": "Missing query field"}, status_code=400)
 
-    initial_state: AgentState = {
+    result = agent.invoke({
         "query": query,
         "topic": "",
         "context": "",
         "answer": "",
-        "is_out_of_scope": False
-    }
+        "out_of_scope": False
+    })
 
-    result = agent.invoke(initial_state)
     return JSONResponse({"answer": result["answer"]})
