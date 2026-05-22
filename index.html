@@ -435,5 +435,21 @@
     <script src="knowledge_base.js"></script>
     <script src="layout.js"></script>
     <script src="script.js"></script>
+    <script>
+        // Mobile menu fallback
+        var menuBtn = document.getElementById('mobile-menu');
+        var menuIcon = document.getElementById('menu-icon');
+        var navMenu = document.querySelector('.nav-links');
+        if (menuBtn && navMenu) {
+            menuBtn.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+                if (navMenu.classList.contains('active')) {
+                    menuIcon.className = 'fas fa-times';
+                } else {
+                    menuIcon.className = 'fas fa-bars';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
