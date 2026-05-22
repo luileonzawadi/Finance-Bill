@@ -1,25 +1,25 @@
-import sys
+import re, sys, pdfplumber
 from pathlib import Path
-from PyPDF2 import PdfReader
 
-pdf_path = Path('Finance_Bill_2026.pdf')
-output_path = Path('Finance_Bill_2026.txt')
+PDF_PATH = Path("Finance_Bill_2026.pdf")
+OUTPUT_PATH = Path("Finance_Bill_2026.txt")
 
-if not pdf_path.is_file():
-    print(f'PDF not found at {pdf_path}')
-    sys.exit(1)
+def clean(text):
+    text = re.sub(r"-\n(\w)", r"\1", text)
+    text = re.sub(r"[ \t]+", " ", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    text = re.sub(r"^\s*\d{1,4}\s*$", "", text, flags=re.MULTILINE)
+    text = re.sub(r"The Finance Bill,?\s*2026\s*\n", "", text)
+    return text.strip()
 
-reader = PdfReader(str(pdf_path))
-text_parts = []
-for page_num, page in enumerate(reader.pages, start=1):
-    try:
-        txt = page.extract_text()
-    except Exception as e:
-        txt = ''
-        print(f'Error extracting page {page_num}: {e}')
-    if txt:
-        text_parts.append(txt)
+with pdfplumber.open(str(PDF_PATH)) as pdf:
+    pages = []
+    for i, page in enumerate(pdf.pages, 1):
+        txt = page.extract_text(x_tolerance=2, y_tolerance=3)
+        if txt:
+            pages.append(txt)
+        if i % 20 == 0:
+            print(f"Page {i}/{len(pdf.pages)}")
 
-full_text = "\n\n".join(text_parts)
-output_path.write_text(full_text, encoding='utf-8')
-print(f'Extracted text written to {output_path}')
+OUTPUT_PATH.write_text(clean("\n\n".join(pages)), encoding="utf-8")
+print(f"Done. Words: {len(OUTPUT_PATH.read_text().split()):,}")
