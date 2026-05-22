@@ -1997,3 +1997,22 @@ footer::before {
         font-size: 1.5rem;
     }
 }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    .hero-text h1 {
+        font-size: 3rem;
+    }
+    .grid, .contact-wrapper, .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .hero-image img {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+}
