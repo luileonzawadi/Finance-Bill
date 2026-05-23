@@ -8,23 +8,46 @@ document.addEventListener('DOMContentLoaded', () => {
         if (scrollProgress) scrollProgress.style.width = scrolled + "%";
     });
 
-    // Mobile Menu Toggle
-    const mobileMenu = document.getElementById('mobile-menu');
-    const navLinks = document.querySelector('.nav-links');
+    // Mobile Menu Toggle - exposed initializer so injected navbars can be bound after load
+    window.initNavbar = function initNavbar() {
+        const mobileMenuEl = document.getElementById('mobile-menu');
+        const navLinksEl = document.querySelector('.nav-links');
 
-    if (mobileMenu) {
-        mobileMenu.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            mobileMenu.classList.toggle('active');
-            document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : 'auto';
+        if (!mobileMenuEl || !navLinksEl) return;
+
+        // Prevent double-initialization
+        if (mobileMenuEl.dataset.navInit === '1') return;
+        mobileMenuEl.dataset.navInit = '1';
+
+        mobileMenuEl.addEventListener('click', () => {
+            const isActive = navLinksEl.classList.toggle('active');
+            mobileMenuEl.classList.toggle('active');
+            document.body.style.overflow = isActive ? 'hidden' : 'auto';
             const menuIcon = document.getElementById('menu-icon');
-            if (navLinks.classList.contains('active')) {
-                menuIcon.classList.replace('fa-bars', 'fa-times');
-            } else {
-                menuIcon.classList.replace('fa-times', 'fa-bars');
+            if (menuIcon) {
+                menuIcon.classList.toggle('fa-bars', !isActive);
+                menuIcon.classList.toggle('fa-times', isActive);
             }
         });
-    }
+
+        // Close menu when a nav link is clicked
+        navLinksEl.querySelectorAll('a').forEach(function (link) {
+            if (link.dataset.navInit === '1') return;
+            link.dataset.navInit = '1';
+            link.addEventListener('click', function () {
+                if (navLinksEl.classList.contains('active')) {
+                    navLinksEl.classList.remove('active');
+                    mobileMenuEl.classList.remove('active');
+                    const menuIcon = document.getElementById('menu-icon');
+                    if (menuIcon) {
+                        menuIcon.classList.remove('fa-times');
+                        menuIcon.classList.add('fa-bars');
+                    }
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+    };
 
     // Smooth Scroll and Close Menu on Mobile
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {

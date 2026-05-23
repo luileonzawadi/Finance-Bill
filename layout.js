@@ -12,7 +12,12 @@
                 el.outerHTML = html;
                 // Re-run any scripts that depend on navbar after it's injected
                 if (placeholderId === 'navbar-placeholder') {
-                    initNavbar();
+                    // Prefer global initNavbar if provided by script.js (idempotent)
+                    if (typeof window.initNavbar === 'function') {
+                        try { window.initNavbar(); } catch (e) { console.error(e); }
+                    } else {
+                        initNavbar();
+                    }
                 }
             })
             .catch(function (err) {

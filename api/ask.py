@@ -1,154 +1,83 @@
 import os
 import re
-from typing import TypedDict
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from groq import Groq
-from langgraph.graph import StateGraph, END
-import chromadb
-from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 
 load_dotenv()
 
 app = FastAPI()
 
-# ─────────────────────────────────────────
-# LOAD CHROMADB RAG INDEX
-# ─────────────────────────────────────────
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-INDEX_DIR = os.path.join(BASE_DIR, "chroma_index")
+KNOWLEDGE_BASE = """
+THE FINANCE BILL, 2026 — OFFICIAL KENYA GAZETTE SUPPLEMENT NO. 113
+Published: 5th May 2026 | Kenya National Assembly
 
-_collection = None
+INCOME TAX ACT AMENDMENTS:
 
-def get_collection():
-    global _collection
-    if _collection is None:
-        ef = SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
-        client = chromadb.PersistentClient(path=INDEX_DIR)
-        # Build index if it doesn't exist
-        existing = [c.name for c in client.list_collections()]
-        if "finance_bill_2026" not in existing:
-            _build_index(client, ef)
-        _collection = client.get_collection(
-            name="finance_bill_2026",
-            embedding_function=ef
-        )
-    return _collection
+ROYALTIES: Now includes payments for proprietary software (licensing, development, training, maintenance, support). Also includes fees for access to digital platforms, card networks (Visa, Mastercard), payment schemes, clearing and switching systems. All subject to Withholding Tax (WHT).
 
-def _build_index(client, ef):
-    text_path = os.path.join(BASE_DIR, "Finance_Bill_2026.txt")
-    with open(text_path, "r", encoding="utf-8") as f:
-        raw = f.read()
-    raw = re.sub(r"\n{3,}", "\n\n", raw)
-    raw = re.sub(r"[ \t]+", " ", raw)
-    words = raw.split()
-    chunks, i = [], 0
-    while i < len(words):
-        chunks.append(" ".join(words[i:i+400]))
-        i += 320
-    collection = client.create_collection(
-        name="finance_bill_2026",
-        embedding_function=ef,
-        metadata={"hnsw:space": "cosine"}
-    )
-    for i in range(0, len(chunks), 100):
-        batch = chunks[i:i+100]
-        collection.add(documents=batch, ids=[f"chunk_{i+j}" for j in range(len(batch))])
+MANAGEMENT OR PROFESSIONAL FEES: Now includes merchant service fees and card interchange fees. Subject to WHT.
 
-# ─────────────────────────────────────────
-# TOPIC CLASSIFICATION
-# ─────────────────────────────────────────
-TOPIC_KEYWORDS = {
-    "income_tax": [
-        "income tax", "paye", "salary", "employment", "gratuity", "pension",
-        "withholding", "royalty", "management fee", "professional fee",
-        "motor vehicle tax", "non-resident", "benefit", "threshold",
-        "housing loan", "scrap metal", "winnings", "betting", "gambling",
-        "digital content", "content creator", "youtube", "tiktok", "influencer",
-        "shipping", "trust", "dividend", "interest", "capital gains", "instalment tax"
-    ],
-    "vat": [
-        "vat", "value added tax", "zero rated", "exempt", "standard rated",
-        "bread", "electric bus", "solar", "motorcycle", "mobile phone",
-        "handset", "sugarcane", "financial services", "payment gateway",
-        "merchant", "input tax", "taxable supply", "zero-rated"
-    ],
-    "excise_duty": [
-        "excise", "excise duty", "imported phone", "cellular", "tobacco",
-        "cigarette", "alcohol", "beer", "spirits", "betting", "gaming",
-        "virtual asset", "coal", "antique vehicle", "fruit juice",
-        "plastic", "ceramic", "furniture", "glass", "paper", "kraft"
-    ],
-    "tax_procedures": [
-        "tax procedures", "etims", "electronic invoice", "pin", "registration",
-        "deregistration", "penalty", "interest", "amnesty", "refund",
-        "overpayment", "objection", "appeal", "audit", "assessment",
-        "virtual asset service provider", "prepopulated return",
-        "tax avoidance", "scheme", "kra", "commissioner", "compliance"
-    ],
-    "miscellaneous": [
-        "import declaration", "idf", "railway development levy", "rdl",
-        "road maintenance levy", "fuel", "stamp duty", "real estate",
-        "reit", "infrastructure", "public private partnership"
-    ]
-}
+WINNINGS: Defined per Gambling Control Act 2025. Winnings = payout minus stake. Only net gain is taxable.
 
-def classify_topic(query: str) -> str:
-    q = query.lower()
-    scores = {topic: 0 for topic in TOPIC_KEYWORDS}
-    for topic, keywords in TOPIC_KEYWORDS.items():
-        for kw in keywords:
-            if kw in q:
-                scores[topic] += 1
-    best = max(scores, key=scores.get)
-    return best if scores[best] > 0 else "general"
+NON-CASH EMPLOYEE BENEFITS: Tax-free threshold increased from Ksh 2,000 to Ksh 10,000 per month. Includes meals, airtime, gym, transport from employer.
 
-def is_out_of_scope(query: str, topic: str) -> bool:
-    if topic != "general":
-        return False
-    finance_keywords = [
-        "finance bill", "tax", "kenya", "kra", "levy", "duty", "vat",
-        "income", "excise", "bill", "2026", "act", "parliament"
-    ]
-    return not any(kw in query.lower() for kw in finance_keywords)
+GRATUITY EXEMPTION: Exempt only if contract is at least 3 years continuous service and amount does not exceed 31% of basic salary per year of service.
 
-# ─────────────────────────────────────────
-# RAG RETRIEVAL
-# ─────────────────────────────────────────
-def retrieve_context(query: str, n_results: int = 6) -> str:
-    try:
-        collection = get_collection()
-        results = collection.query(
-            query_texts=[query],
-            n_results=n_results
-        )
-        docs = results["documents"][0] if results["documents"] else []
-        return "\n\n---\n\n".join(docs)
-    except Exception as e:
-        # Fallback to keyword search if ChromaDB fails
-        return fallback_keyword_search(query)
+NON-RESIDENT RENTAL INCOME TAX (New Section 6B): New final WHT on rental income earned in Kenya by non-residents. Must register on KRA digital portal and file/pay by 20th of following month.
 
-def fallback_keyword_search(query: str) -> str:
-    try:
-        text_path = os.path.join(BASE_DIR, "Finance_Bill_2026.txt")
-        with open(text_path, "r", encoding="utf-8") as f:
-            raw = f.read()
-        paragraphs = [p.strip() for p in raw.split("\n\n") if p.strip()]
-        tokens = re.findall(r"\w+", query.lower())
-        scored = []
-        for para in paragraphs:
-            score = sum(1 for tok in tokens if tok in para.lower())
-            if score > 0:
-                scored.append((score, para))
-        scored.sort(key=lambda x: x[0], reverse=True)
-        return "\n\n".join(p for _, p in scored[:5])
-    except Exception:
-        return "Finance Bill 2026 context unavailable."
+SHIPPING TAX: Must be paid within 5 days of payment receipt or ship departure, whichever is earlier.
 
-# ─────────────────────────────────────────
-# GROQ CLIENT
-# ─────────────────────────────────────────
+DIGITAL CONTENT MONETIZATION WHT: Resident creators 5% WHT. Non-resident creators 20% WHT. Covers YouTube, TikTok, Instagram, podcasts, online courses, brand deals.
+
+SCRAP METAL WHT: Payments for scrap metal purchases now subject to WHT at 1.5% of gross amount.
+
+GAMBLING AND BETTING WINNINGS WHT: WHT on net winnings at 20%. Betting companies deduct before paying players.
+
+MOTOR VEHICLE TAX (New Section 12B): Rate is 2.5% of vehicle value per year. Minimum Ksh 5,000/year. Maximum Ksh 100,000/year. Collected by insurance companies when issuing or renewing motor vehicle insurance. Insurers remit to KRA within 5 working days. Penalty for insurers: 2% of uncollected tax per month. Exemptions: Government vehicles, ambulances, fire engines, diplomatic vehicles, registered charities. Examples: Car worth Ksh 200,000 pays Ksh 5,000/year. Car worth Ksh 1,000,000 pays Ksh 25,000/year. Car worth Ksh 4,000,000 pays capped Ksh 100,000/year.
+
+HOUSING LOAN INTEREST DEDUCTION: Employees repaying CBK housing loans can deduct interest up to Ksh 360,000 per year from taxable income.
+
+DIGITAL SERVICES TAX (DST): Expanded from non-residents only to include resident local digital platforms. Rate 1.5% of gross transaction value. Covers streaming, ride-hailing (Uber, Bolt), food delivery, e-commerce, online advertising, cloud services.
+
+VAT ACT AMENDMENTS:
+
+BREAD VAT STATUS: BREAD REMAINS ZERO-RATED. It was NOT moved to standard-rated 16% VAT. Bread prices will NOT increase due to this Bill. Bakers can still recover input VAT.
+
+VAT RECLASSIFICATION ZERO-RATED TO EXEMPT: Moved to Exempt: electric motorcycles, electric buses, solar panels, basic mobile handsets, sugarcane transport. Zero-Rated means supplier can claim input VAT back. Exempt means supplier cannot claim input VAT back.
+
+VAT ON FINANCIAL SERVICES: Merchant acquiring services, card processing fees, payment gateway services now subject to VAT.
+
+EXCISE DUTY ACT AMENDMENTS:
+
+ECO LEVY: Smartphones, tablets, laptops Ksh 228 per unit. Desktop computers and monitors Ksh 300 per unit. Lithium-ion batteries Ksh 350 per unit. Rubber tyres Ksh 1,000 per tyre. Non-biodegradable plastic packaging Ksh 98 per kg. Diapers and sanitary products with plastic Ksh 150 per package.
+
+EXCISE DUTY ON IMPORTED MOBILE PHONES: Previous rate 10%. New rate 25%. Increase of 15 percentage points. Purpose is to encourage local phone assembly.
+
+ROAD MAINTENANCE LEVY REDUCTION: Reduced from Ksh 3 to Ksh 1.50 per litre of fuel. Purpose is to lower fuel pump prices and reduce transport costs.
+
+TAX PROCEDURES ACT AMENDMENTS:
+
+eTIMS: All businesses must use Electronic Tax Invoice Management System for real-time reporting to KRA. Non-compliance fines: Ksh 100,000 for companies, Ksh 10,000 for individuals.
+
+KRA ENFORCEMENT: KRA can access bank records, M-Pesa, Airtel Money data without court order for tax evasion cases. Can freeze accounts of persistent defaulters.
+
+TAX AMNESTY: Persons who pay all principal tax due by 31 December 2025 get waiver on penalties and interest.
+
+VIRTUAL ASSET SERVICE PROVIDERS: Must file information returns with KRA on all crypto users and transactions. Penalty for failure: Ksh 1,000,000 per failure.
+
+MISCELLANEOUS:
+
+IMPORT DECLARATION FEE (IDF): 2.5% of customs value.
+RAILWAY DEVELOPMENT LEVY (RDL): Maintained at 2% of customs value of all imports.
+STAMP DUTY: Exemption extended for real estate investment trust (REIT) property transfers.
+
+IMPLEMENTATION TIMELINE:
+1st July 2026: Most sections including income tax, betting, scrap metal.
+1st January 2027: Sections 19, 20, 25, 35, 36, 37, 59, 32.
+"""
+
 def get_groq_keys():
     keys = []
     primary = os.getenv("GROQ_API_KEY", "").strip()
@@ -159,10 +88,30 @@ def get_groq_keys():
         keys.extend([k.strip() for k in extras.split(",") if k.strip()])
     return list(dict.fromkeys(keys))
 
-def call_groq(prompt: str) -> str:
+def call_groq(query: str) -> str:
     keys = get_groq_keys()
     if not keys:
-        return "GROQ_API_KEY is not configured. Please set it in Vercel environment variables."
+        return "GROQ_API_KEY is not configured. Please add it in Vercel Environment Variables under Settings."
+
+    prompt = f"""You are a Senior Tax Advisor for the Kenya Finance Bill 2026.
+
+RULES:
+1. Answer ONLY using the knowledge base below.
+2. No asterisks, no hash symbols, no markdown. Plain text only.
+3. Use numbers for lists: 1. 2. 3.
+4. Quote exact rates and amounts from the knowledge base.
+5. Explain simply and relate to everyday Kenyan life (matatu, duka, boda boda, mama mboga).
+6. Match the user language. If asked in Swahili or Sheng, reply in that language.
+7. BREAD REMAINS ZERO-RATED. It will NOT increase in price.
+8. If question is outside scope, say so and refer to KRA at www.kra.go.ke.
+
+KNOWLEDGE BASE:
+{KNOWLEDGE_BASE}
+
+USER QUESTION: {query}
+
+ANSWER:"""
+
     last_error = None
     for key in keys:
         try:
@@ -171,119 +120,24 @@ def call_groq(prompt: str) -> str:
                 model="llama-3.3-70b-versatile",
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.2,
-                max_tokens=1200,
+                max_tokens=1000,
             )
-            return completion.choices[0].message.content
+            raw = completion.choices[0].message.content
+            raw = re.sub(r"#{1,6}\s*", "", raw)
+            raw = re.sub(r"\*\*(.*?)\*\*", r"\1", raw)
+            raw = re.sub(r"\*(.*?)\*", r"\1", raw)
+            raw = re.sub(r"`{1,3}", "", raw)
+            raw = re.sub(r" {2,}", " ", raw)
+            return raw.strip()
         except Exception as e:
             last_error = e
             continue
-    return f"All Groq API keys failed. Last error: {str(last_error)}"
 
-# ─────────────────────────────────────────
-# LANGGRAPH STATE
-# ─────────────────────────────────────────
-class AgentState(TypedDict):
-    query: str
-    topic: str
-    context: str
-    answer: str
-    out_of_scope: bool
+    return f"Service temporarily unavailable. Please try again. Error: {str(last_error)}"
 
-# ─────────────────────────────────────────
-# LANGGRAPH NODES
-# ─────────────────────────────────────────
-def node_classify(state: AgentState) -> AgentState:
-    topic = classify_topic(state["query"])
-    out_of_scope = is_out_of_scope(state["query"], topic)
-    return {**state, "topic": topic, "out_of_scope": out_of_scope}
-
-def node_retrieve(state: AgentState) -> AgentState:
-    context = retrieve_context(state["query"])
-    return {**state, "context": context}
-
-def node_reason(state: AgentState) -> AgentState:
-    topic_labels = {
-        "income_tax": "Income Tax Act (Cap. 470)",
-        "vat": "Value Added Tax Act",
-        "excise_duty": "Excise Duty Act",
-        "tax_procedures": "Tax Procedures Act",
-        "miscellaneous": "Miscellaneous Fees, Levies and Road Maintenance",
-        "general": "Finance Bill 2026"
-    }
-    topic_label = topic_labels.get(state["topic"], "Finance Bill 2026")
-
-    prompt = f"""You are a Senior Tax Advisor specializing in the Kenya Finance Bill 2026.
-
-STRICT RULES:
-1. Answer ONLY using the context provided below from the Finance Bill 2026.
-2. Do NOT use asterisks (*), hash symbols (#), or any markdown formatting.
-3. Write in plain paragraphs. For lists use numbers: 1. 2. 3.
-4. For important points write them in CAPITAL LETTERS.
-5. Quote exact rates, section numbers, and amounts from the context.
-6. Explain in simple terms relatable to ordinary Kenyans (matatu, duka, boda boda, mama mboga).
-7. Match the language of the question. If asked in Swahili or Sheng, reply in that language.
-8. CRITICAL: Bread REMAINS ZERO-RATED under the Finance Bill 2026. It will NOT increase in price.
-9. If the context does not contain enough information to answer, say so honestly.
-
-Topic Area: {topic_label}
-
-Relevant Context from Finance Bill 2026 (retrieved via semantic search):
-{state["context"]}
-
-User Question: {state["query"]}
-
-Answer:"""
-
-    raw = call_groq(prompt)
-
-    # Strip all markdown
-    clean = re.sub(r"#{1,6}\s*", "", raw)
-    clean = re.sub(r"\*\*(.*?)\*\*", r"\1", clean)
-    clean = re.sub(r"\*(.*?)\*", r"\1", clean)
-    clean = re.sub(r"`{1,3}", "", clean)
-    clean = re.sub(r" {2,}", " ", clean)
-
-    return {**state, "answer": clean.strip()}
-
-def node_fallback(state: AgentState) -> AgentState:
-    answer = (
-        "That question is outside the scope of the Finance Bill 2026. "
-        "I can only answer questions about the Kenya Finance Bill 2026 — income tax, "
-        "VAT, excise duty, motor vehicle tax, eco levy, digital services tax, "
-        "and tax procedures. For other matters, please consult KRA at www.kra.go.ke "
-        "or a qualified tax professional."
-    )
-    return {**state, "answer": answer}
-
-def route_after_classify(state: AgentState) -> str:
-    return "fallback" if state["out_of_scope"] else "retrieve"
-
-# ─────────────────────────────────────────
-# BUILD LANGGRAPH
-# ─────────────────────────────────────────
-workflow = StateGraph(AgentState)
-workflow.add_node("classify", node_classify)
-workflow.add_node("retrieve", node_retrieve)
-workflow.add_node("reason", node_reason)
-workflow.add_node("fallback", node_fallback)
-
-workflow.set_entry_point("classify")
-workflow.add_conditional_edges("classify", route_after_classify, {
-    "retrieve": "retrieve",
-    "fallback": "fallback"
-})
-workflow.add_edge("retrieve", "reason")
-workflow.add_edge("reason", END)
-workflow.add_edge("fallback", END)
-
-agent = workflow.compile()
-
-# ─────────────────────────────────────────
-# FASTAPI ENDPOINTS
-# ─────────────────────────────────────────
 @app.get("/")
 async def health():
-    return {"status": "ok", "message": "Finance Bill 2026 RAG Agent running"}
+    return {"status": "ok", "message": "Finance Bill 2026 AI running"}
 
 @app.post("/api/ask")
 @app.post("/")
@@ -292,13 +146,5 @@ async def ask(request: Request):
     query = payload.get("query", "").strip()
     if not query:
         return JSONResponse({"error": "Missing query field"}, status_code=400)
-
-    result = agent.invoke({
-        "query": query,
-        "topic": "",
-        "context": "",
-        "answer": "",
-        "out_of_scope": False
-    })
-
-    return JSONResponse({"answer": result["answer"]})
+    answer = call_groq(query)
+    return JSONResponse({"answer": answer})
