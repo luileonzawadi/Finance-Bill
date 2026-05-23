@@ -189,10 +189,11 @@ header {
     left: 0;
     width: 100%;
     z-index: 1000;
-    background: var(--glass);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--glass-border);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
     padding: 1.4rem 0 1.2rem;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
 }
 header::before {
     content: '';
