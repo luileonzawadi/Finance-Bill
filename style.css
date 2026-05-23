@@ -262,9 +262,10 @@ nav {
     color: var(--red);
 }
 
-.mobile-cta {
-    display: none;
-}
+    .nav-links a.active {
+        color: var(--red);
+        font-weight: 700;
+    }
 
 .cta-btn {
     padding: 0.6rem 1.4rem;
@@ -285,6 +286,60 @@ nav {
 
 .menu-toggle {
     display: none;
+}
+
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+
+    .nav-links.active {
+        display: flex !important;
+        flex-direction: column;
+        gap: 0.5rem;
+        position: fixed !important;
+        top: 88px !important;
+        left: 12px !important;
+        right: 12px !important;
+        background: rgba(255, 255, 255, 0.96) !important;
+        backdrop-filter: blur(16px) !important;
+        padding: 1rem 1.2rem !important;
+        border-radius: 18px !important;
+        box-shadow: 0 24px 48px rgba(15, 23, 42, 0.15) !important;
+        z-index: 99999 !important;
+        margin: 0 !important;
+        list-style: none;
+    }
+
+    .nav-links.active li {
+        width: 100%;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+    }
+
+    .nav-links.active li:last-child {
+        border-bottom: none;
+    }
+
+    .nav-links.active li.mobile-cta {
+        display: block;
+    }
+
+    .nav-links a {
+        display: block;
+        padding: 0.85rem 0;
+        font-size: 1rem;
+    }
+
+    .cta-btn {
+        display: none;
+    }
+
+    .menu-toggle {
+        display: block;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
 }
 
 /* Hero Section */

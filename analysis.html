@@ -25,6 +25,7 @@
     </style>
 </head>
 <body>
+    <div id="scroll-progress"></div>
     <div class="national-spirals">
         <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
             
@@ -668,27 +669,29 @@
 
     <div id="footer-placeholder"></div>
 
-    <!-- AI Advisor Component -->
     <div id="ai-advisor" class="ai-bubble">
+        <div class="ai-trigger">
+            <i class="fas fa-robot"></i>
+            <span>Ask AI Advisor</span>
+        </div>
         <div class="ai-window">
             <div class="ai-header">
                 <div class="ai-status">
                     <div class="pulse"></div>
-                    <span>Live Intelligence Active</span>
+                    <div class="status-text">
+                        <strong>AI Tax Advisor</strong>
+                        <span id="ai-connection-status" style="display: block; font-size: 0.7rem; opacity: 0.7;">Live Intelligence Active</span>
+                    </div>
                 </div>
                 <button class="ai-close"><i class="fas fa-times"></i></button>
             </div>
             <div class="ai-body" id="ai-chat-body">
                 <div class="ai-message bot">Habari! I am the AI Tax Advisor. I have analyzed the proposed 2026 Finance Bill. What would you like to know about how it affects you?</div>
             </div>
-            <div class="ai-input-area">
-                <input type="text" id="ai-input" placeholder="Ask about Eco Levy, Motor Vehicle Tax...">
+            <div class="ai-footer">
+                <textarea id="ai-input" placeholder="Type your question..." rows="1"></textarea>
                 <button id="ai-send"><i class="fas fa-paper-plane"></i></button>
             </div>
-        </div>
-        <div class="ai-trigger">
-            <i class="fas fa-robot"></i>
-            <span>Ask AI Advisor</span>
         </div>
     </div>
 

@@ -20,23 +20,11 @@
             }
         })();
     </script>
-    <style>
-        #navbar { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: rgba(255,255,255,0.75); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.4); padding: 1.2rem 0; }
-        #navbar nav { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
-        .logo-text { font-size: 1.4rem; font-weight: 800; letter-spacing: -1px; color: #0F172A; }
-        .logo-text span { color: #C60000; }
-        .nav-links { display: flex; list-style: none; gap: 2.5rem; margin: 0; padding: 0; }
-        .nav-links a { text-decoration: none; color: #475569; font-weight: 600; font-size: 0.95rem; }
-        .cta-btn { padding: 0.6rem 1.4rem; border: none; border-radius: 50px; background: #C60000; color: white; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
-        .menu-toggle { display: none; }
-        @media (max-width: 768px) {
-            .nav-links { display: none !important; }
-            .nav-links.active { display: flex !important; flex-direction: column; position: fixed; top: 70px; right: 16px; width: 240px; padding: 1.5rem; border-radius: 20px; background: rgba(15,23,42,0.97); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 20px 40px rgba(0,0,0,0.3); gap: 1rem; z-index: 99999; list-style: none; margin: 0; }
-            .nav-links.active a { color: white !important; font-size: 1rem; font-weight: 600; }
-            .cta-btn { display: none; }
-            .menu-toggle { display: block !important; font-size: 1.5rem; cursor: pointer; color: #0F172A; }
-        }
-    </style>
+</head>
+<body>
+    <div id="scroll-progress"></div>
+    <div class="national-spirals">
+        <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
                 <!-- Crossed spears behind the shield -->
                 <line x1="320" y1="320" x2="480" y2="480" stroke="var(--gold)" stroke-width="4" stroke-linecap="round" opacity="0.4" />
                 <line x1="480" y1="320" x2="320" y2="480" stroke="var(--gold)" stroke-width="4" stroke-linecap="round" opacity="0.4" />
@@ -559,27 +547,29 @@
 
     <div id="footer-placeholder"></div>
 
-    <!-- AI Advisor Component -->
     <div id="ai-advisor" class="ai-bubble">
+        <div class="ai-trigger">
+            <i class="fas fa-robot"></i>
+            <span>Ask AI Advisor</span>
+        </div>
         <div class="ai-window">
             <div class="ai-header">
                 <div class="ai-status">
                     <div class="pulse"></div>
-                    <span>Live Intelligence Active</span>
+                    <div class="status-text">
+                        <strong>AI Tax Advisor</strong>
+                        <span id="ai-connection-status" style="display: block; font-size: 0.7rem; opacity: 0.7;">Live Intelligence Active</span>
+                    </div>
                 </div>
                 <button class="ai-close"><i class="fas fa-times"></i></button>
             </div>
             <div class="ai-body" id="ai-chat-body">
                 <div class="ai-message bot">Habari! I am the AI Tax Advisor. I have analyzed the proposed 2026 Finance Bill. What would you like to know about how it affects you?</div>
             </div>
-            <div class="ai-input-area">
-                <input type="text" id="ai-input" placeholder="Ask about Eco Levy, Motor Vehicle Tax...">
+            <div class="ai-footer">
+                <textarea id="ai-input" placeholder="Type your question..." rows="1"></textarea>
                 <button id="ai-send"><i class="fas fa-paper-plane"></i></button>
             </div>
-        </div>
-        <div class="ai-trigger">
-            <i class="fas fa-robot"></i>
-            <span>Ask AI Advisor</span>
         </div>
     </div>
 
