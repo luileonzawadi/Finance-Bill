@@ -71,50 +71,32 @@
     <main>
         <section class="hero" style="padding-bottom: 2rem;">
             <div class="container hero-content">
-                <div class="hero-text">
-                    <span class="badge">Mwananchi Guide</span>
-                    <h2>Bill Comparison &amp; <span>Key Changes</span></h2>
-                    <p>How does the 2026 Finance Bill compare to past frameworks? Examine what's newly added, what has been reduced, and what enforcement measures are becoming stricter for taxpayers.</p>
-                    <div class="hero-actions">
-                        <a href="#highlights" class="btn primary">Key Highlights</a>
-                        <a href="#deep-dive" class="btn secondary">Deep Dive</a>
-                    </div>
+                <div class="national-spirals">
+                    <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+
+                        <!-- Outer Financial Ring (rotates clockwise) -->
+                        <g class="ring-clockwise" opacity="0.25">
+                            <circle cx="400" cy="400" r="280" stroke="var(--black)" stroke-width="1.5" stroke-dasharray="12 12" fill="none" />
+                            <!-- Financial Nodes & Symbols along the ring path -->
+                            <text x="680" y="405" font-family="'Outfit', sans-serif" font-weight="800" font-size="16" fill="var(--red)" text-anchor="middle">%</text>
+                            <text x="400" y="690" font-family="'Outfit', sans-serif" font-weight="800" font-size="14" fill="var(--green)" text-anchor="middle">Ksh</text>
+                            <text x="120" y="405" font-family="'Outfit', sans-serif" font-weight="800" font-size="16" fill="var(--red)" text-anchor="middle">%</text>
+                            <text x="400" y="130" font-family="'Outfit', sans-serif" font-weight="800" font-size="14" fill="var(--green)" text-anchor="middle">Ksh</text>
+                            <circle cx="400" cy="400" r="320" stroke="var(--white)" stroke-width="1" stroke-dasharray="4 20" fill="none" />
+                        </g>
+
+                        <!-- Inner Legislative Ring (rotates counter-clockwise) -->
+                        <g class="ring-counter" opacity="0.2">
+                            <circle cx="400" cy="400" r="180" stroke="var(--red)" stroke-width="1.5" stroke-dasharray="8 8" fill="none" />
+                            <!-- Scale or document silhouettes along the inner path -->
+                            <text x="527" y="283" font-family="FontAwesome" font-size="14" fill="var(--black)" text-anchor="middle">âš–</text>
+                            <text x="527" y="527" font-family="'Outfit', sans-serif" font-weight="800" font-size="14" fill="var(--black)" text-anchor="middle">$</text>
+                            <text x="273" y="527" font-family="FontAwesome" font-size="14" fill="var(--black)" text-anchor="middle">âš–</text>
+                            <text x="273" y="283" font-family="'Outfit', sans-serif" font-weight="800" font-size="14" fill="var(--black)" text-anchor="middle">$</text>
+                            <circle cx="400" cy="400" r="220" stroke="var(--green)" stroke-width="1" stroke-dasharray="2 12" fill="none" />
+                        </g>
+                    </svg>
                 </div>
-
-            </div>
-        </section>
-
-        <section id="highlights" class="highlights" style="padding-top: 2rem;">
-            <div class="container">
-                <div class="grid">
-                    <!-- Motor Vehicle Tax -->
-                    <div class="card">
-                        <div class="icon-box"><i class="fas fa-car"></i></div>
-                        <h3>Motor Vehicle Tax (2.5%)</h3>
-                        <p><strong>What it says:</strong> A new 2.5% tax on the value of motor vehicles, paid when issuing insurance cover.</p>
-                        <p><strong>Mwananchi Impact:</strong> If you own a car, maintaining it just became more expensive. You will have to pay this wealth tax every year when renewing your motor insurance, meaning your overall transport and insurance costs will rise.</p>
-                    </div>
-                    <!-- Eco Levy -->
-                    <div class="card">
-                        <div class="icon-box"><i class="fas fa-leaf"></i></div>
-                        <h3>Eco Levy (Ushuru wa Mazingira)</h3>
-                        <p><strong>What it says:</strong> A new levy applied to electronics (phones, TVs, computers) and plastic packaging to manage environmental waste.</p>
-                        <p><strong>Mwananchi Impact:</strong> Buying a new smartphone, laptop, or even daily items packaged in plastics will cost more. The prices of these goods in the shops will go up because manufacturers and importers will pass the tax on to you, the consumer.</p>
-                    </div>
-                    <!-- Digital Economy Tax -->
-                    <div class="card">
-                        <div class="icon-box"><i class="fas fa-wifi"></i></div>
-                        <h3>Digital Economy Taxation</h3>
-                        <p><strong>What it says:</strong> Expansion of the Digital Service Tax (DST) to capture more online businesses, content creation, and electronic networks.</p>
-                        <p><strong>Mwananchi Impact:</strong> If you run a small business online, sell items on social media, or earn money as a digital creator, the taxman is expanding the net to ensure your online income is taxed. Online services might also increase their subscription fees.</p>
-                    </div>
-                    <!-- Fiscal Consolidation -->
-                    <div class="card">
-                        <div class="icon-box"><i class="fas fa-wallet"></i></div>
-                        <h3>Broader Tax Base (Fiscal Consolidation)</h3>
-                        <p><strong>What it says:</strong> Government is looking to close tax loopholes and bring more informal sectors into the tax bracket to raise revenue.</p>
-                        <p><strong>Mwananchi Impact:</strong> The "kadogo economy" and informal businesses will face tighter scrutiny. If you run a small shop or offer services informally, expect more push from KRA for compliance, PIN registrations, and potentially eTIMS for daily tracking.</p>
-                    </div>
                 </div>
             </div>
         </section>
