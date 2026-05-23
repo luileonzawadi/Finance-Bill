@@ -116,17 +116,25 @@ body {
 
 @media (max-width: 768px) {
     .national-spirals {
-        width: 220vw;
-        height: 220vw;
-        opacity: 0.35;
+        /* keep spiral visible and more centered on mobile */
+        width: 140vw;
+        height: 140vw;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -40%);
+        opacity: 0.45;
     }
 }
 
 @media (max-width: 480px) {
     .national-spirals {
-        width: 280vw;
-        height: 280vw;
-        opacity: 0.3;
+        /* slightly larger on very small screens but moved up so it remains visible */
+        width: 160vw;
+        height: 160vw;
+        top: 35%;
+        left: 50%;
+        transform: translate(-50%, -35%);
+        opacity: 0.4;
     }
 }
 
@@ -1697,6 +1705,13 @@ footer::before {
         pointer-events: none;
         transition: all 0.35s cubic-bezier(0.2, 1, 0.3, 1);
         z-index: 999;
+    }
+
+    /* Show menu when active */
+    .nav-links.active {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        transform: translateY(0) !important;
     }
 
     .mobile-cta {

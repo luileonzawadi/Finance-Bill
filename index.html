@@ -74,7 +74,27 @@
         .menu-toggle { display: none; }
         @media (max-width: 768px) {
             .nav-links { display: none; }
-            .nav-links.active { display: flex; flex-direction: column; }
+            /* Mobile dropdown: fixed positioning so it reliably appears above content */
+            .nav-links.active {
+                display: flex !important;
+                flex-direction: column;
+                position: fixed !important;
+                top: 70px !important;
+                left: 10px !important;
+                right: 10px !important;
+                background: rgba(255,255,255,0.96) !important;
+                backdrop-filter: blur(10px) !important;
+                padding: 0.75rem 1rem !important;
+                gap: 0.25rem !important;
+                border-radius: 12px !important;
+                box-shadow: 0 18px 40px rgba(0,0,0,0.12) !important;
+                z-index: 99999 !important;
+                list-style: none;
+                margin: 0;
+            }
+            .nav-links.active li { padding: 0.5rem 0; border-bottom: 1px solid rgba(0,0,0,0.04); }
+            .nav-links.active li:last-child { border-bottom: none; }
+            .nav-links a { display: block; padding: 0.5rem 0.25rem; }
             .cta-btn { display: none; }
             .menu-toggle { display: block; font-size: 1.5rem; cursor: pointer; }
         }
