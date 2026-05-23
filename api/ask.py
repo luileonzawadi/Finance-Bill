@@ -6,76 +6,62 @@ from fastapi.responses import JSONResponse
 from groq import Groq
 
 load_dotenv()
-
 app = FastAPI()
 
 KNOWLEDGE_BASE = """
-THE FINANCE BILL, 2026 — OFFICIAL KENYA GAZETTE SUPPLEMENT NO. 113
-Published: 5th May 2026 | Kenya National Assembly
+THE FINANCE BILL, 2026 — KENYA GAZETTE SUPPLEMENT NO. 113, 5th May 2026
 
-INCOME TAX ACT AMENDMENTS:
+MOTOR VEHICLE TAX (New Section 12B Income Tax Act):
+Rate: 2.5% of vehicle value per year. Minimum Ksh 5,000/year. Maximum Ksh 100,000/year.
+Collected by insurance companies when issuing or renewing motor vehicle insurance.
+Insurers remit to KRA within 5 working days. Penalty for insurers: 2% of uncollected tax per month.
+Exemptions: Government vehicles, ambulances, fire engines, diplomatic vehicles, registered charities.
+Examples: Car worth Ksh 200,000 pays Ksh 5,000/year. Car worth Ksh 1,000,000 pays Ksh 25,000/year. Car worth Ksh 4,000,000 pays capped Ksh 100,000/year.
 
-ROYALTIES: Now includes payments for proprietary software (licensing, development, training, maintenance, support). Also includes fees for access to digital platforms, card networks (Visa, Mastercard), payment schemes, clearing and switching systems. All subject to Withholding Tax (WHT).
+BREAD VAT: BREAD REMAINS ZERO-RATED. NOT moved to 16% VAT. Bread prices will NOT increase. Bakers still recover input VAT.
 
-MANAGEMENT OR PROFESSIONAL FEES: Now includes merchant service fees and card interchange fees. Subject to WHT.
+ECO LEVY: Smartphones/tablets/laptops Ksh 228/unit. Desktop computers Ksh 300/unit. Lithium-ion batteries Ksh 350/unit. Rubber tyres Ksh 1,000/tyre. Plastic packaging Ksh 98/kg. Diapers with plastic Ksh 150/package.
 
-WINNINGS: Defined per Gambling Control Act 2025. Winnings = payout minus stake. Only net gain is taxable.
+EXCISE DUTY ON IMPORTED PHONES: Increased from 10% to 25%.
 
-NON-CASH EMPLOYEE BENEFITS: Tax-free threshold increased from Ksh 2,000 to Ksh 10,000 per month. Includes meals, airtime, gym, transport from employer.
+ROAD MAINTENANCE LEVY: Reduced from Ksh 3 to Ksh 1.50 per litre of fuel. Fuel prices will drop slightly.
 
-GRATUITY EXEMPTION: Exempt only if contract is at least 3 years continuous service and amount does not exceed 31% of basic salary per year of service.
+NON-CASH EMPLOYEE BENEFITS: Tax-free threshold increased from Ksh 2,000 to Ksh 10,000 per month.
 
-NON-RESIDENT RENTAL INCOME TAX (New Section 6B): New final WHT on rental income earned in Kenya by non-residents. Must register on KRA digital portal and file/pay by 20th of following month.
+HOUSING LOAN INTEREST DEDUCTION: Up to Ksh 360,000 per year deductible for CBK housing loans.
+
+DIGITAL CONTENT MONETIZATION WHT: Resident creators 5% WHT. Non-resident creators 20% WHT. Covers YouTube, TikTok, Instagram, podcasts, brand deals.
+
+DIGITAL SERVICES TAX: 1.5% of gross transaction value. Now covers both resident and non-resident digital platforms including Uber, Bolt, streaming, e-commerce.
+
+SCRAP METAL WHT: 1.5% WHT on scrap metal purchases.
+
+GAMBLING WINNINGS WHT: 20% WHT on net winnings (payout minus stake).
+
+ROYALTIES EXPANDED: Now includes software licensing, development, training, maintenance, support fees. Also card networks (Visa, Mastercard), payment schemes, clearing and switching systems. All subject to WHT.
+
+MANAGEMENT FEES EXPANDED: Now includes merchant service fees and card interchange fees. Subject to WHT.
+
+NON-RESIDENT RENTAL INCOME TAX (New Section 6B): Final WHT on rental income earned in Kenya by non-residents. Register on KRA portal, file and pay by 20th of following month.
+
+GRATUITY EXEMPTION: Exempt only if contract is at least 3 years continuous and amount does not exceed 31% of basic salary per year.
 
 SHIPPING TAX: Must be paid within 5 days of payment receipt or ship departure, whichever is earlier.
 
-DIGITAL CONTENT MONETIZATION WHT: Resident creators 5% WHT. Non-resident creators 20% WHT. Covers YouTube, TikTok, Instagram, podcasts, online courses, brand deals.
+eTIMS: All businesses must use Electronic Tax Invoice Management System. Non-compliance: Ksh 100,000 fine for companies, Ksh 10,000 for individuals.
 
-SCRAP METAL WHT: Payments for scrap metal purchases now subject to WHT at 1.5% of gross amount.
+KRA ENFORCEMENT: Can access bank records, M-Pesa, Airtel Money without court order for tax evasion. Can freeze accounts.
 
-GAMBLING AND BETTING WINNINGS WHT: WHT on net winnings at 20%. Betting companies deduct before paying players.
+TAX AMNESTY: Pay all principal tax due by 31 December 2025 to get waiver on penalties and interest.
 
-MOTOR VEHICLE TAX (New Section 12B): Rate is 2.5% of vehicle value per year. Minimum Ksh 5,000/year. Maximum Ksh 100,000/year. Collected by insurance companies when issuing or renewing motor vehicle insurance. Insurers remit to KRA within 5 working days. Penalty for insurers: 2% of uncollected tax per month. Exemptions: Government vehicles, ambulances, fire engines, diplomatic vehicles, registered charities. Examples: Car worth Ksh 200,000 pays Ksh 5,000/year. Car worth Ksh 1,000,000 pays Ksh 25,000/year. Car worth Ksh 4,000,000 pays capped Ksh 100,000/year.
+VIRTUAL ASSET SERVICE PROVIDERS: Must file information returns with KRA on all crypto users. Penalty: Ksh 1,000,000 per failure.
 
-HOUSING LOAN INTEREST DEDUCTION: Employees repaying CBK housing loans can deduct interest up to Ksh 360,000 per year from taxable income.
+VAT RECLASSIFICATION ZERO-RATED TO EXEMPT: Electric motorcycles, electric buses, solar panels, basic mobile handsets, sugarcane transport moved from Zero-Rated to Exempt.
 
-DIGITAL SERVICES TAX (DST): Expanded from non-residents only to include resident local digital platforms. Rate 1.5% of gross transaction value. Covers streaming, ride-hailing (Uber, Bolt), food delivery, e-commerce, online advertising, cloud services.
+IMPORT DECLARATION FEE: 2.5% of customs value.
+RAILWAY DEVELOPMENT LEVY: 2% of customs value of all imports.
 
-VAT ACT AMENDMENTS:
-
-BREAD VAT STATUS: BREAD REMAINS ZERO-RATED. It was NOT moved to standard-rated 16% VAT. Bread prices will NOT increase due to this Bill. Bakers can still recover input VAT.
-
-VAT RECLASSIFICATION ZERO-RATED TO EXEMPT: Moved to Exempt: electric motorcycles, electric buses, solar panels, basic mobile handsets, sugarcane transport. Zero-Rated means supplier can claim input VAT back. Exempt means supplier cannot claim input VAT back.
-
-VAT ON FINANCIAL SERVICES: Merchant acquiring services, card processing fees, payment gateway services now subject to VAT.
-
-EXCISE DUTY ACT AMENDMENTS:
-
-ECO LEVY: Smartphones, tablets, laptops Ksh 228 per unit. Desktop computers and monitors Ksh 300 per unit. Lithium-ion batteries Ksh 350 per unit. Rubber tyres Ksh 1,000 per tyre. Non-biodegradable plastic packaging Ksh 98 per kg. Diapers and sanitary products with plastic Ksh 150 per package.
-
-EXCISE DUTY ON IMPORTED MOBILE PHONES: Previous rate 10%. New rate 25%. Increase of 15 percentage points. Purpose is to encourage local phone assembly.
-
-ROAD MAINTENANCE LEVY REDUCTION: Reduced from Ksh 3 to Ksh 1.50 per litre of fuel. Purpose is to lower fuel pump prices and reduce transport costs.
-
-TAX PROCEDURES ACT AMENDMENTS:
-
-eTIMS: All businesses must use Electronic Tax Invoice Management System for real-time reporting to KRA. Non-compliance fines: Ksh 100,000 for companies, Ksh 10,000 for individuals.
-
-KRA ENFORCEMENT: KRA can access bank records, M-Pesa, Airtel Money data without court order for tax evasion cases. Can freeze accounts of persistent defaulters.
-
-TAX AMNESTY: Persons who pay all principal tax due by 31 December 2025 get waiver on penalties and interest.
-
-VIRTUAL ASSET SERVICE PROVIDERS: Must file information returns with KRA on all crypto users and transactions. Penalty for failure: Ksh 1,000,000 per failure.
-
-MISCELLANEOUS:
-
-IMPORT DECLARATION FEE (IDF): 2.5% of customs value.
-RAILWAY DEVELOPMENT LEVY (RDL): Maintained at 2% of customs value of all imports.
-STAMP DUTY: Exemption extended for real estate investment trust (REIT) property transfers.
-
-IMPLEMENTATION TIMELINE:
-1st July 2026: Most sections including income tax, betting, scrap metal.
-1st January 2027: Sections 19, 20, 25, 35, 36, 37, 59, 32.
+IMPLEMENTATION: 1st July 2026 for most sections. 1st January 2027 for sections 19, 20, 25, 35, 36, 37, 59, 32.
 """
 
 def get_groq_keys():
@@ -91,7 +77,7 @@ def get_groq_keys():
 def call_groq(query: str) -> str:
     keys = get_groq_keys()
     if not keys:
-        return "GROQ_API_KEY is not configured. Please add it in Vercel Environment Variables under Settings."
+        return "GROQ_API_KEY is not set. Go to Vercel dashboard, Settings, Environment Variables and add GROQ_API_KEY, then redeploy."
 
     prompt = f"""You are a Senior Tax Advisor for the Kenya Finance Bill 2026.
 
@@ -99,11 +85,11 @@ RULES:
 1. Answer ONLY using the knowledge base below.
 2. No asterisks, no hash symbols, no markdown. Plain text only.
 3. Use numbers for lists: 1. 2. 3.
-4. Quote exact rates and amounts from the knowledge base.
-5. Explain simply and relate to everyday Kenyan life (matatu, duka, boda boda, mama mboga).
-6. Match the user language. If asked in Swahili or Sheng, reply in that language.
+4. Quote exact rates and amounts.
+5. Explain simply. Relate to everyday Kenyan life (matatu, duka, boda boda, mama mboga).
+6. Match the user language. If Swahili or Sheng, reply in that language.
 7. BREAD REMAINS ZERO-RATED. It will NOT increase in price.
-8. If question is outside scope, say so and refer to KRA at www.kra.go.ke.
+8. If outside scope, refer to KRA at www.kra.go.ke.
 
 KNOWLEDGE BASE:
 {KNOWLEDGE_BASE}
@@ -133,11 +119,12 @@ ANSWER:"""
             last_error = e
             continue
 
-    return f"Service temporarily unavailable. Please try again. Error: {str(last_error)}"
+    return f"Service temporarily unavailable. Error: {str(last_error)}"
 
 @app.get("/")
 async def health():
-    return {"status": "ok", "message": "Finance Bill 2026 AI running"}
+    keys = get_groq_keys()
+    return {"status": "ok", "groq_configured": len(keys) > 0, "key_count": len(keys)}
 
 @app.post("/api/ask")
 @app.post("/")

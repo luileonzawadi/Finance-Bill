@@ -3,26 +3,48 @@
     function loadLayout(placeholderId, url) {
         const el = document.getElementById(placeholderId);
         if (!el) return;
-        fetch(url)
-            .then(function (res) {
-                if (!res.ok) throw new Error('Failed to load ' + url);
-                return res.text();
-            })
-            .then(function (html) {
-                el.outerHTML = html;
-                // Re-run any scripts that depend on navbar after it's injected
-                if (placeholderId === 'navbar-placeholder') {
-                    // Prefer global initNavbar if provided by script.js (idempotent)
-                    if (typeof window.initNavbar === 'function') {
-                        try { window.initNavbar(); } catch (e) { console.error(e); }
-                    } else {
-                        initNavbar();
+
+        // Try several candidate paths to support different hosting setups
+        const candidates = [
+            url,
+            url.replace(/^\//, ''),
+            './' + url.replace(/^\//, ''),
+            '/layout/' + url.split('/').pop(),
+            'layout/' + url.split('/').pop(),
+            'public/layout/' + url.split('/').pop(),
+            './public/layout/' + url.split('/').pop()
+        ];
+
+        (function tryNext(i) {
+            if (i >= candidates.length) {
+                console.error('All layout fetch attempts failed for', candidates);
+                return;
+            }
+            const tryUrl = candidates[i];
+            // eslint-disable-next-line no-console
+            console.debug('Attempting to load layout from', tryUrl);
+            fetch(tryUrl)
+                .then(function (res) {
+                    if (!res.ok) throw new Error('Failed to load ' + tryUrl + ' (' + res.status + ')');
+                    return res.text();
+                })
+                .then(function (html) {
+                    el.outerHTML = html;
+                    // Re-run any scripts that depend on navbar after it's injected
+                    if (placeholderId === 'navbar-placeholder') {
+                        if (typeof window.initNavbar === 'function') {
+                            try { window.initNavbar(); } catch (e) { console.error(e); }
+                        } else {
+                            try { initNavbar(); } catch (e) { console.error(e); }
+                        }
                     }
-                }
-            })
-            .catch(function (err) {
-                console.error(err);
-            });
+                })
+                .catch(function (err) {
+                    // Try next candidate after failure
+                    console.warn('Layout load failed for', tryUrl, err);
+                    tryNext(i + 1);
+                });
+        })(0);
     }
 
     function initNavbar() {
