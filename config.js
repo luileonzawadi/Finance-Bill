@@ -5,31 +5,40 @@
 var AI_CONFIG = {
     isLive: true,
 
-    async call(userInput, context) {
+    async call(messages, context) {
         if (!this.isLive) throw new Error("AI not configured.");
 
         try {
-            const response = await fetch('/api/ask', {
+            const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: userInput })
+                body: JSON.stringify({ messages: messages, context: context })
             });
 
-            const data = await response.json();
+            let data;
+            const contentType = response.headers.get('content-type') || '';
+            if (contentType.includes('application/json')) {
+                data = await response.json();
+            } else {
+                const text = await response.text();
+                console.error(`Server returned non-JSON response (${response.status}):`, text.substring(0, 200));
+                throw new Error('Unable to reach the AI service. Please try again.');
+            }
 
             if (response.ok) {
-                let text = data.answer;
+                let text = data.response;
                 text = text.replace(/#{1,6}\s*/g, '');
                 text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 text = text.replace(/\*/g, '');
                 text = text.replace(/ {2,}/g, ' ');
                 return text.trim();
             } else {
-                throw new Error(data.error || `Server returned ${response.status}`);
+                console.error('API error response:', data.error || response.status);
+                throw new Error(data.error || 'Unable to reach the AI service. Please try again.');
             }
         } catch (err) {
             console.error("API Error: ", err);
-            throw new Error(`Connection Failed: ${err.message}`);
+            throw err;
         }
     }
 };

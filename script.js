@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error("AI Error:", error);
                 typing.remove();
-                addMessage('Live Intelligence Error: Unable to fetch live data. Using offline analysis...', 'bot');
+                addMessage('Let me check my offline knowledge base for that...', 'bot');
                 setTimeout(() => simulateResponse(rawText.toLowerCase()), 1500);
             }
         } else {

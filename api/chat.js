@@ -1,10 +1,29 @@
 module.exports = async function (req, res) {
+    // Set CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
+    // Ensure fetch is available (Node 18+ has it built-in)
+    if (typeof fetch === 'undefined') {
+        console.error('FATAL: Global fetch is not available. Ensure Node.js >= 18.');
+        return res.status(500).json({ error: 'Something went wrong. Please try again in a moment.' });
+    }
+
     try {
         const { messages, context } = req.body;
+
+        if (!messages || !context) {
+            return res.status(400).json({ error: 'Missing required fields: messages and context' });
+        }
         
         // Gather all available API keys
         let keys = [];
@@ -22,7 +41,8 @@ module.exports = async function (req, res) {
         keys = [...new Set(keys)];
 
         if (keys.length === 0) {
-            return res.status(500).json({ error: "API key not configured in Environment Variables. Please set GROQ_API_KEY or GROQ_API_KEYS in .env." });
+            console.error('No API keys configured. Set GROQ_API_KEY or GROQ_API_KEYS in environment variables.');
+            return res.status(500).json({ error: 'Something went wrong. Please try again in a moment.' });
         }
 
         const systemPrompt = `You are a highly accurate, objective Kenyan Finance Bill AI Advisor. Your absolute priority is accuracy and truth.
@@ -93,7 +113,7 @@ CRITICAL INSTRUCTIONS:
             throw lastError || new Error("All configured API keys failed to return a response.");
         }
     } catch (error) {
-        console.error('Serverless Function Error:', error);
-        res.status(500).json({ error: error.message });
+        console.error('Serverless Function Error:', error.message, error.stack);
+        res.status(500).json({ error: 'Something went wrong. Please try again in a moment.' });
     }
 };
