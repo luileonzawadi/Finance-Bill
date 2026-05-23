@@ -317,6 +317,17 @@ nav {
         border-bottom: 1px solid rgba(15, 23, 42, 0.06);
     }
 
+    /* Ensure nav links are always visible on mobile dropdowns */
+    .nav-links a {
+        color: var(--text-main) !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .nav-links.active a {
+        color: var(--text-main) !important;
+    }
+
     .nav-links.active li:last-child {
         border-bottom: none;
     }
