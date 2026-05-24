@@ -368,4 +368,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     `;
     document.head.appendChild(style);
+// Countdown Timer
+function startCountdown() {
+  const deadline = new Date('2026-05-25T17:00:00+03:00').getTime();
+  const daysEl = document.getElementById('days');
+  const hoursEl = document.getElementById('hours');
+  const minutesEl = document.getElementById('minutes');
+  const secondsEl = document.getElementById('seconds');
+  const statusEl = document.getElementById('countdown-status');
+  if (!daysEl || !hoursEl || !minutesEl || !secondsEl) return;
+  const update = () => {
+    const now = new Date().getTime();
+    const diff = deadline - now;
+    if (diff <= 0) {
+      daysEl.textContent = '00';
+      hoursEl.textContent = '00';
+      minutesEl.textContent = '00';
+      secondsEl.textContent = '00';
+      if (statusEl) statusEl.textContent = 'Submission Closed';
+      clearInterval(timer);
+      return;
+    }
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const m = Math.floor((diff / (1000 * 60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+    daysEl.textContent = String(d).padStart(2, '0');
+    hoursEl.textContent = String(h).padStart(2, '0');
+    minutesEl.textContent = String(m).padStart(2, '0');
+    secondsEl.textContent = String(s).padStart(2, '0');
+  };
+  update();
+  const timer = setInterval(update, 1000);
+}
+startCountdown();
 });
