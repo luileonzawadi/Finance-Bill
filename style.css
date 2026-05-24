@@ -2205,4 +2205,258 @@ a.footer-contributor:hover {
     max-width: fit-content !important;
     min-width: unset !important;
     width: auto !important;
+
 }
+
+/* Public Participation & Memoranda Submissions */
+.participation-section {
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.8) 100%);
+    border-top: 1px solid var(--glass-border);
+    position: relative;
+}
+
+.participation-card {
+    background: var(--glass);
+    backdrop-filter: blur(24px);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--glass-border);
+    padding: 3.5rem;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.participation-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--black) 0% 30%, var(--gold) 30% 33%, var(--red) 33% 63%, var(--gold) 63% 66%, var(--green) 66% 100%);
+    z-index: 5;
+}
+
+.participation-badge {
+    background: rgba(198, 0, 0, 0.08);
+    color: var(--red);
+    padding: 0.5rem 1.2rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2rem;
+}
+
+.participation-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.participation-info h2 {
+    font-size: 2.8rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+.participation-info h2 span {
+    color: var(--red);
+}
+
+.participation-lead {
+    font-size: 1.15rem;
+    color: var(--text-heading);
+    margin-bottom: 1rem;
+    font-weight: 500;
+    line-height: 1.6;
+}
+
+.participation-desc {
+    font-size: 0.95rem;
+    color: var(--text-main);
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+}
+
+.submission-emails {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.email-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.9rem 1.8rem;
+    background: var(--black);
+    color: white !important;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    transition: var(--transition-fast);
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.1);
+}
+
+.email-btn:hover {
+    background: var(--red);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(198, 0, 0, 0.2);
+}
+
+.email-btn.secondary-email {
+    background: white;
+    color: var(--black) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.email-btn.secondary-email:hover {
+    background: var(--light-bg);
+    border-color: var(--black);
+    transform: translateY(-2px);
+}
+
+/* Countdown Card */
+.countdown-card {
+    background: white;
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    text-align: center;
+    position: relative;
+}
+
+.countdown-title {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: var(--text-main);
+    margin-bottom: 1.5rem;
+}
+
+.countdown-timer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.time-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 65px;
+}
+
+.time-num {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--black);
+    line-height: 1;
+    font-family: 'Outfit', sans-serif;
+}
+
+.time-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-top: 0.5rem;
+    letter-spacing: 0.5px;
+}
+
+.time-separator {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: rgba(0, 0, 0, 0.15);
+    line-height: 1;
+    margin-top: -1.2rem;
+}
+
+.deadline-date {
+    font-size: 0.85rem;
+    color: var(--text-main);
+    font-weight: 600;
+    padding: 0.8rem;
+    background: var(--light-bg);
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.deadline-date i {
+    color: var(--red);
+}
+
+.countdown-status {
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--green);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.countdown-status::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
+    animation: pulse 2s infinite;
+}
+
+.countdown-status.closed {
+    color: var(--red);
+}
+
+.countdown-status.closed::before {
+    background: var(--red);
+    animation: none;
+}
+
+@media (max-width: 992px) {
+    .participation-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .participation-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .participation-info h2 {
+        font-size: 2.2rem;
+    }
+    
+    .countdown-timer {
+        gap: 0.2rem;
+    }
+    
+    .time-block {
+        min-width: 50px;
+    }
+    
+    .time-num {
+        font-size: 1.8rem;
+    }
+}
+
