@@ -2189,3 +2189,20 @@ a.footer-contributor:hover {
     opacity: 1;
     transform: translateY(-2px);
 }
+
+/* Smaller analyzing/typing indicator box */
+.ai-message.bot.typing-message,
+.ai-message.bot:has(> .typing-indicator) {
+    padding: 0.4rem 0.9rem;
+    font-size: 0.78rem;
+    max-width: fit-content;
+    opacity: 0.65;
+}
+
+/* Compact typing/analyzing indicator */
+.ai-message.bot.typing-message {
+    padding: 0.4rem 0.8rem !important;
+    max-width: fit-content !important;
+    min-width: unset !important;
+    width: auto !important;
+}
