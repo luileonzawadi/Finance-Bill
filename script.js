@@ -226,7 +226,61 @@ document.addEventListener('DOMContentLoaded', () => {
                 reply: "Hello! Regarding employment tax: PAYE brackets remain active, and withholding taxes are expanded to informal transactions (like scrap metal) and digital cards to widen the net.",
                 sw_reply: "Habari! Kuhusu kodi ya ajira: Viwango vya PAYE vinaendelea kama vilivyo, na kodi za zuio (withholding tax) zimepanuliwa kujumuisha sekta zisizo rasmi (kama chuma chakavu) na mifumo ya kadi za malipo."
             }
-        ];
+        
+        // Glossary of key finance bill terms
+        const glossary = {
+            "finance bill": "The Finance Bill outlines tax proposals, levies, and fiscal measures for the fiscal year.",
+            "vat": "Value Added Tax, a consumption tax applied to goods and services, currently 16% in Kenya.",
+            "eco levy": "Environmental levy on plastic packaging and electronic waste to fund waste management.",
+            "motor vehicle tax": "Annual tax on vehicle valuation, used to fund road maintenance.",
+            "housing levy": "Deduction from salaries to fund affordable housing projects.",
+            "kra": "Kenya Revenue Authority, the tax collection agency.",
+            "paye": "Pay As You Earn, employee income tax withholding.",
+            "withholding tax": "Tax deducted at source on certain payments like scrap metal.",
+            "digital services tax": "Tax on digital platform revenues.",
+            "bread vat": "Zero-rated VAT on basic bread to keep prices low."
+        };
+        // If language already chosen, ensure no leftover modal blocks UI
+        if (sessionStorage.getItem('finance_chat_lang')) {
+            const existingOverlay = document.querySelector('.lang-modal-overlay');
+            const existingModal = document.getElementById('lang-modal');
+            if (existingOverlay) existingOverlay.remove();
+            if (existingModal) existingModal.remove();
+        }
+        // If not set, show modal to choose language
+        if (!sessionStorage.getItem('finance_chat_lang')) {
+            const modal = document.createElement('div');
+            modal.id = 'lang-modal';
+            modal.innerHTML = `
+                <div class="lang-modal-overlay"></div>
+                <div class="lang-modal-content">
+                    <h3>Select Language / Chagua Lugha</h3>
+                    <button id="lang-en" class="lang-btn">English</button>
+                    <button id="lang-sw" class="lang-btn">Kiswahili</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.getElementById('lang-en').addEventListener('click', () => {
+                userLang = 'en';
+                sessionStorage.setItem('finance_chat_lang', 'en');
+                modal.remove();
+            });
+            document.getElementById('lang-sw').addEventListener('click', () => {
+                userLang = 'sw';
+                sessionStorage.setItem('finance_chat_lang', 'sw');
+                modal.remove();
+            });
+        }
+        // Check for glossary term definitions before regular matching
+        const lowerText = text.toLowerCase();
+        for (const term in glossary) {
+            if (lowerText.includes(term)) {
+                const def = glossary[term];
+                response = userLang === 'sw' ? `Habari! ${def}` : `Hello! ${def}`;
+                break;
+            }
+        }
+        if (!response) {
 
         // Detect if user query contains Swahili terms
         const swahiliIndicators = ["habari", "mambo", "vipi", "kodi", "gari", "mkate", "wananchi", "athari", "ushuru", "nyumba", "deni", "nini", "kwa", "na", "ya", "ni", "sana", "karibu", "habari yako"];

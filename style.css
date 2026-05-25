@@ -1267,51 +1267,51 @@ footer::before {
         background: var(--glass);
         backdrop-filter: blur(12px);
         display: flex;
-        gap: 10px;
+        gap: 12px;
         align-items: center;
         border-radius: var(--radius-lg);
         border: 1px solid var(--glass-border);
         box-shadow: var(--shadow);
     }
 
-.ai-footer input,
-.ai-footer textarea {
-    flex: 1;
-    padding: 0.8rem 1.2rem;
-    border-radius: 20px; /* Less rounded corners to prevent text clipping */
-    border: 1px solid rgba(0,0,0,0.1);
-    font-size: 16px; /* Prevents iOS auto-zoom on input focus */
-    background: rgba(255,255,255,0.8);
-    color: var(--text-heading);
-    resize: none;
-    overflow-y: auto;
-    min-height: 2.5rem;
-    line-height: 1.4;
-}
+    .ai-footer input,
+    .ai-footer textarea {
+        flex: 1;
+        padding: 0.9rem 1.3rem;
+        border-radius: 12px;
+        border: 1px solid rgba(0,0,0,0.15);
+        font-size: 15px;
+        background: rgba(255,255,255,0.85);
+        color: var(--text-heading);
+        resize: none;
+        overflow-y: auto;
+        min-height: 2.8rem;
+        line-height: 1.4;
+    }
 .ai-footer textarea::placeholder {
     color: var(--text-muted);
     opacity: 0.7;
 }
 
-.ai-footer button {
-    width: 40px;
-    height: 40px;
-    background: var(--black);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: var(--transition);
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    .ai-footer button {
+        width: 48px;
+        height: 48px;
+        background: var(--black);
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: var(--transition);
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-.ai-footer button:hover {
-    background: #1e293b;
-    transform: scale(1.1);
-}
+    .ai-footer button:hover {
+        background: #1e293b;
+        transform: scale(1.08);
+    }
 
 /* AI Engine Dashboard Visuals */
 .circular-progress {
@@ -2459,4 +2459,104 @@ a.footer-contributor:hover {
         font-size: 1.8rem;
     }
 }
+@media (max-width: 768px) {
+    .participation-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    .submission-emails {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .email-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
 
+.ai-footer {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.5rem;
+    background: var(--light-bg);
+    border-top: 1px solid var(--glass-border);
+}
+
+#ai-input {
+    flex: 1;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    font-family: inherit;
+    resize: none;
+    overflow: hidden;
+    min-height: 38px;
+    transition: border-radius var(--transition-fast);
+}
+
+.ai-footer button {
+    padding: 0.6rem 1rem;
+    background: var(--black);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.ai-footer button:hover {
+    background: var(--red);
+}
+
+@media (max-width: 576px) {
+    .ai-footer {
+        flex-direction: column;
+    }
+    #ai-input {
+        margin-bottom: 0.5rem;
+        border-radius: 16px;
+    }
+    .ai-footer button {
+        width: 100%;
+        border-radius: 16px;
+    }
+}
+
+/* Language selection modal */
+.lang-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+.lang-modal-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    z-index: 1000;
+    max-width: 90vw;
+}
+.lang-btn {
+    margin: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor:;
+    background: var(--black);
+    color: #fff;
+    transition: background var(--transition-fast);
+}
+.lang-btn:hover {
+    background: var(--red);
+}
