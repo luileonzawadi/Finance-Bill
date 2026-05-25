@@ -50,6 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Smooth Scroll and Close Menu on Mobile
+    const navLinks = document.querySelector('.nav-links');
+    const mobileMenu = document.getElementById('mobile-menu');
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
@@ -272,6 +274,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 modal.remove();
             });
         }
+        // Declare response and language preference up front
+        let userLang = sessionStorage.getItem('finance_chat_lang') || 'en';
+        let response = "";
+
         // Check for glossary term definitions before regular matching
         const lowerText = text.toLowerCase();
         for (const term in glossary) {
@@ -281,43 +287,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             }
         }
+
         if (!response) {
+            // Detect if user query contains Swahili terms
+            const swahiliIndicators = ["habari", "mambo", "vipi", "kodi", "gari", "mkate", "wananchi", "athari", "ushuru", "nyumba", "deni", "nini", "kwa", "na", "ya", "ni", "sana", "karibu", "habari yako"];
+            const isSwahiliQuery = swahiliIndicators.some(indicator => text.includes(indicator));
 
-        // Detect if user query contains Swahili terms
-        const swahiliIndicators = ["habari", "mambo", "vipi", "kodi", "gari", "mkate", "wananchi", "athari", "ushuru", "nyumba", "deni", "nini", "kwa", "na", "ya", "ni", "sana", "karibu", "habari yako"];
-        const isSwahiliQuery = swahiliIndicators.some(indicator => text.includes(indicator));
+            let matched = null;
+            let matchedInSwahili = false;
 
-        let matched = null;
-        let matchedInSwahili = false;
-
-        // Try to match Swahili keywords first
-        for (const item of botResponses) {
-            if (item.sw_keys.some(k => text.includes(k))) {
-                matched = item;
-                matchedInSwahili = true;
-                break;
-            }
-        }
-
-        // If no Swahili match, try English
-        if (!matched) {
+            // Try to match Swahili keywords first
             for (const item of botResponses) {
-                if (item.keys.some(k => text.includes(k))) {
+                if (item.sw_keys.some(k => text.includes(k))) {
                     matched = item;
+                    matchedInSwahili = true;
                     break;
                 }
             }
+
+            // If no Swahili match, try English
+            if (!matched) {
+                for (const item of botResponses) {
+                    if (item.keys.some(k => text.includes(k))) {
+                        matched = item;
+                        break;
+                    }
+                }
+            }
+
+            if (matched) {
+                response = (isSwahiliQuery || matchedInSwahili) ? matched.sw_reply : matched.reply;
+            } else {
+                response = isSwahiliQuery
+                    ? "Habari! Ninaweza kujibu maswali kuhusu Mswada wa Fedha wa Kenya 2025/2026 pekee. Jaribu kuuliza kuhusu: kodi ya mkate (VAT), kodi ya gari (motor vehicle tax), kodi ya mazingira (eco levy), ushuru wa KRA, au athari kwa mwananchi. Karibu!"
+                    : "Hello! I can answer questions about the Kenyan Finance Bill 2025/2026. Try asking about: bread VAT, motor vehicle tax, eco levy, housing levy, digital services, KRA enforcement, or the impact on citizens. Let me know how I can help!";
+            }
         }
 
-        let response = "";
-        if (matched) {
-            response = (isSwahiliQuery || matchedInSwahili) ? matched.sw_reply : matched.reply;
-        } else {
-            response = isSwahiliQuery 
-                ? "Habari! Ninaweza kujibu maswali kuhusu Mswada wa Fedha wa Kenya 2025/2026 pekee. Jaribu kuuliza kuhusu: kodi ya mkate (VAT), kodi ya gari (motor vehicle tax), kodi ya mazingira (eco levy), ushuru wa KRA, au athari kwa mwananchi. Karibu!"
-                : "Hello! I can answer questions about the Kenyan Finance Bill 2025/2026. Try asking about: bread VAT, motor vehicle tax, eco levy, housing levy, digital services, KRA enforcement, or the impact on citizens. Let me know how I can help!";
-        }
-        
         // Save response to history
         chatHistory.push({ role: 'assistant', content: response });
         saveHistory();
