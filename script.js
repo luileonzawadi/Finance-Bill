@@ -226,7 +226,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 reply: "Hello! Regarding employment tax: PAYE brackets remain active, and withholding taxes are expanded to informal transactions (like scrap metal) and digital cards to widen the net.",
                 sw_reply: "Habari! Kuhusu kodi ya ajira: Viwango vya PAYE vinaendelea kama vilivyo, na kodi za zuio (withholding tax) zimepanuliwa kujumuisha sekta zisizo rasmi (kama chuma chakavu) na mifumo ya kadi za malipo."
             }
-        
+        ];
+
         // Glossary of key finance bill terms
         const glossary = {
             "finance bill": "The Finance Bill outlines tax proposals, levies, and fiscal measures for the fiscal year.",
