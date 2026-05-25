@@ -490,7 +490,7 @@
 
         <!-- Existing Sections ... -->
         <div id="ai-advisor" class="ai-bubble">
-            <div class="ai-trigger">
+            <div class="ai-trigger" onclick="document.getElementById('ai-advisor').classList.toggle('active'); var inp=document.getElementById('ai-input'); if(inp)inp.focus();" style="cursor:pointer; pointer-events:all; position:relative; z-index:9999;">
                 <i class="fas fa-robot"></i>
                 <span>Ask AI Advisor</span>
             </div>
@@ -503,7 +503,7 @@
                             <span id="ai-connection-status" style="display: block; font-size: 0.7rem; opacity: 0.7;">Live Intelligence Active</span>
                         </div>
                     </div>
-                    <button class="ai-close"><i class="fas fa-times"></i></button>
+                    <button class="ai-close" onclick="event.stopPropagation(); document.getElementById('ai-advisor').classList.remove('active');"><i class="fas fa-times"></i></button>
                 </div>
                 <div class="ai-body" id="ai-chat-body">
                     <div class="ai-message bot">Hello! I am your Senior Tax Advisor. I've analyzed the Finance Bill 2025 and the 2026 Proposals. Ask me anything about tax changes, withholding rates, or policy shifts.</div>
