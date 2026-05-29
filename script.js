@@ -112,16 +112,74 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Language modal: shown when chatbot is first opened if no language has been chosen
+    function showLangModal(onSelect) {
+        // Remove any existing modal
+        const existing = document.getElementById('lang-modal');
+        if (existing) existing.remove();
+
+        const modal = document.createElement('div');
+        modal.id = 'lang-modal';
+        modal.innerHTML = `
+            <div class="lang-modal-overlay"></div>
+            <div class="lang-modal-content">
+                <div class="lang-modal-icon">🌍</div>
+                <h3>Choose Your Language</h3>
+                <p>Chagua lugha yako / Select your language</p>
+                <div class="lang-btn-group">
+                    <button id="lang-en" class="lang-btn">
+                        <span class="lang-flag">🇬🇧</span>
+                        <span>English</span>
+                    </button>
+                    <button id="lang-sw" class="lang-btn">
+                        <span class="lang-flag">🇰🇪</span>
+                        <span>Kiswahili</span>
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        // Animate in
+        requestAnimationFrame(() => modal.classList.add('lang-modal-visible'));
+
+        document.getElementById('lang-en').addEventListener('click', () => {
+            sessionStorage.setItem('finance_chat_lang', 'en');
+            modal.classList.remove('lang-modal-visible');
+            setTimeout(() => modal.remove(), 300);
+            if (onSelect) onSelect('en');
+        });
+        document.getElementById('lang-sw').addEventListener('click', () => {
+            sessionStorage.setItem('finance_chat_lang', 'sw');
+            modal.classList.remove('lang-modal-visible');
+            setTimeout(() => modal.remove(), 300);
+            if (onSelect) onSelect('sw');
+        });
+    }
+
     if (aiTrigger) {
         aiTrigger.addEventListener('click', () => {
             const isActive = aiAdvisor.classList.toggle('active');
             if (isActive) {
-                if (aiInput) aiInput.focus();
+                // Lock page scroll
+                document.body.style.overflow = 'hidden';
+
+                // Show language modal if not yet selected
+                if (!sessionStorage.getItem('finance_chat_lang')) {
+                    setTimeout(() => showLangModal((lang) => {
+                        if (aiInput) aiInput.focus();
+                    }), 300);
+                } else {
+                    if (aiInput) aiInput.focus();
+                }
+
                 if (aiChatBody) {
                     setTimeout(() => {
                         aiChatBody.scrollTop = aiChatBody.scrollHeight;
                     }, 150);
                 }
+            } else {
+                // Restore page scroll
+                document.body.style.overflow = '';
             }
         });
     }
@@ -130,6 +188,8 @@ document.addEventListener('DOMContentLoaded', () => {
         aiClose.addEventListener('click', (e) => {
             e.stopPropagation();
             aiAdvisor.classList.remove('active');
+            // Restore page scroll
+            document.body.style.overflow = '';
         });
     }
 
@@ -464,38 +524,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "bread vat": "Zero-rated VAT on basic bread to keep prices low."
         };
 
-        if (sessionStorage.getItem('finance_chat_lang')) {
-            const existingOverlay = document.querySelector('.lang-modal-overlay');
-            const existingModal = document.getElementById('lang-modal');
-            if (existingOverlay) existingOverlay.remove();
-            if (existingModal) existingModal.remove();
-        }
-
-        if (!sessionStorage.getItem('finance_chat_lang')) {
-            const modal = document.createElement('div');
-            modal.id = 'lang-modal';
-            modal.innerHTML = `
-                <div class="lang-modal-overlay"></div>
-                <div class="lang-modal-content">
-                    <h3>Select Language / Chagua Lugha</h3>
-                    <button id="lang-en" class="lang-btn">English</button>
-                    <button id="lang-sw" class="lang-btn">Kiswahili</button>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            document.getElementById('lang-en').addEventListener('click', () => {
-                sessionStorage.setItem('finance_chat_lang', 'en');
-                modal.remove();
-                processResponse();
-            });
-            document.getElementById('lang-sw').addEventListener('click', () => {
-                sessionStorage.setItem('finance_chat_lang', 'sw');
-                modal.remove();
-                processResponse();
-            });
-            return;
-        }
-
+        // Language is always set before simulateResponse is called (modal fires on chatbot open)
         processResponse();
 
         function processResponse() {
@@ -697,7 +726,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Dynamic CSS for animations and suggestion chips
+    // Dynamic CSS for animations, suggestion chips, and language modal
     const style = document.createElement('style');
     style.innerHTML = `
         .reveal-hidden {
@@ -733,6 +762,93 @@ document.addEventListener('DOMContentLoaded', () => {
             color: white !important;
             border-color: #C60000 !important;
             transform: translateY(-1px);
+        }
+
+        /* ── Language Selection Modal ── */
+        #lang-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        #lang-modal.lang-modal-visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .lang-modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(4px);
+        }
+        .lang-modal-content {
+            position: relative;
+            z-index: 1;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            max-width: 340px;
+            width: 90%;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        #lang-modal.lang-modal-visible .lang-modal-content {
+            transform: translateY(0);
+        }
+        .lang-modal-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .lang-modal-content h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #0F172A;
+            margin-bottom: 0.4rem;
+        }
+        .lang-modal-content p {
+            font-size: 0.88rem;
+            color: #64748b;
+            margin-bottom: 1.5rem;
+        }
+        .lang-btn-group {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+        .lang-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.85rem 1.4rem;
+            border-radius: 14px;
+            border: 2px solid #e2e8f0;
+            background: #f8fafc;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #0F172A;
+            transition: all 0.2s ease;
+            min-width: 110px;
+        }
+        .lang-btn:hover {
+            background: #C60000;
+            color: white;
+            border-color: #C60000;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(198,0,0,0.25);
+        }
+        .lang-flag {
+            font-size: 1.8rem;
         }
     `;
     document.head.appendChild(style);
