@@ -105,7 +105,7 @@ var AI_CONFIG = {
                 }
             }
 
-            const localKeys = Array.isArray(window.GROQ_API_KEYS) ? window.GROQ_API_KEYS : [];
+            const localKeys = Array.isArray(window.GEMINI_API_KEYS) ? window.GEMINI_API_KEYS : [];
             const apiKeys = [
                 ...encodedKeys,
                 ...localKeys
@@ -116,49 +116,47 @@ var AI_CONFIG = {
             }
 
             const systemPrompt = `You are a warm, helpful, and highly accurate Kenyan Finance Bill AI Advisor. Your absolute priority is accuracy and truth, explained in a friendly, conversational, and easy-to-understand manner.
-Your knowledge base is strictly limited to the provided GROUND TRUTH CONTEXT.
+The provided GROUND TRUTH CONTEXT is a guiding set of facts to help you answer questions accurately and avoid hallucinations.
 
 GROUND TRUTH CONTEXT:
 ${context}
 
 CRITICAL INSTRUCTIONS:
-1. STRICT TOPIC GUARD: You MUST ONLY answer questions directly related to Kenya's economy, taxes, fiscal policy, or the Finance Bills (2025 and 2026).
-   If the user asks an off-topic question (anything unrelated to economy, taxes, or the Finance Bill, such as general advice, history of other topics, programming, creative writing, science, etc.), you MUST reply with this exact message:
-   "I can only answer questions related to the Kenyan Finance Bill, taxes, and the economy. Please ask a question related to these topics."
-2. NO HALLUCINATIONS: Do not invent, extrapolate, or assume any information, tax rates, rates, timelines, or provisions not explicitly mentioned in the GROUND TRUTH CONTEXT. If the context does not contain the answer, you must state: "I cannot find that information in the official 2025/2026 Finance Bill documents."
-3. WARM & HUMAN TONE: Be warm, polite, and explanatory. Respond nicely, use friendly greetings, and explain tax concepts simply (relating to everyday Kenyan life like boda boda, mama mboga, matatus, or dukas if helpful). Do not say "Based on the context" or "As an AI..." but do greet the user nicely and explain with friendly, human warmth.
-4. ACCURACY IS PARAMOUNT: Statically compare 2025 and 2026 ONLY when the user explicitly asks for comparison. Use 2026 as the default for current questions.
-5. MEMORY AND CONTINUITY: You will receive the conversation history. Review past exchanges to maintain continuity, identify references, and build upon previous answers naturally.
-6. LANGUAGE: Match the language of the user's question exactly (English, Swahili, or Sheng).
-   - If they write in Swahili, respond in warm, polite Swahili (Kiswahili). Use phrases like "Habari!", "Asante kwa swali lako," "Kwa ufupi," or "Karibu!" to sound welcoming.
-   - If they write in Sheng, respond in warm, natural Sheng to make them feel comfortable, while keeping tax terms clear.`;
+1. GREETINGS & LANGUAGE: If a user greets you, return the greeting warmly, state that you are the AI Advisor for the Finance Bill 2026, and ask them what they would like to know about the bill. Mention that they have the opportunity to ask questions in either Swahili or English before you proceed.
+2. STRICT TOPIC GUARD: You MUST ONLY answer questions directly related to the Finance Bill 2026 and nothing else. Do not answer questions about previous bills, general programming, or other unrelated topics. If a question is off-topic, politely redirect the user back to the Finance Bill 2026.
+3. FORMATTING (CRITICAL): When your answer is long, you MUST arrange the words well and break your response into well-spaced paragraphs to give users a nice time reading. Use bullet points for lists. Avoid giant walls of text.
+4. USE THE CONTEXT: Use the GROUND TRUTH CONTEXT to guide your answers. You may provide broader economic context if it helps explain the bill, but avoid hallucinating specific numbers, rates, or timelines not present in reality.
+5. WARM & HUMAN TONE: Be warm, polite, and explanatory. Explain tax concepts simply (relating to everyday Kenyan life like boda boda, mama mboga, matatus, or dukas if helpful).
+6. LANGUAGE: Match the language of the user's question exactly (English, Swahili, or Sheng). Use phrases like "Habari!", "Asante kwa swali lako," or "Karibu!" when speaking Swahili.`;
 
-            const completionMessages = [
-                { role: 'system', content: systemPrompt },
-                ...messages
-            ];
-
-            const url = 'https://api.groq.com/openai/v1/chat/completions';
+            const geminiMessages = messages.map(msg => ({
+                role: msg.role === 'assistant' ? 'model' : 'user',
+                parts: [{ text: msg.content }]
+            }));
 
             // Try each API key until one works
             let lastError = null;
             for (let i = 0; i < apiKeys.length; i++) {
                 try {
-                    // Set a timeout of 8 seconds per key to handle hangs/delays silently
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKeys[i]}`;
+                    
                     const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 8000);
+                    const timeoutId = setTimeout(() => controller.abort(), 15000);
 
                     const response = await fetch(url, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${apiKeys[i]}`
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            model: 'llama-3.3-70b-versatile',
-                            messages: completionMessages,
-                            temperature: 0.1,
-                            max_tokens: 1000
+                            systemInstruction: {
+                                parts: [{ text: systemPrompt }]
+                            },
+                            contents: geminiMessages,
+                            generationConfig: {
+                                temperature: 0.1,
+                                maxOutputTokens: 1000
+                            }
                         }),
                         signal: controller.signal
                     });
@@ -168,15 +166,15 @@ CRITICAL INSTRUCTIONS:
                     const data = await response.json();
 
                     if (response.ok) {
-                        let text = data.choices[0].message.content;
+                        let text = data.candidates[0].content.parts[0].text;
                         return this.formatMarkdown(text);
                     } else {
                         const errMsg = data.error ? data.error.message : `API returned ${response.status}`;
-                        console.warn(`Groq API key at index ${i} failed (status ${response.status}): ${errMsg}`);
+                        console.warn(`Gemini API key at index ${i} failed (status ${response.status}): ${errMsg}`);
                         lastError = new Error(errMsg);
                     }
                 } catch (err) {
-                    console.warn(`Connection failed with Groq key at index ${i}: ${err.message}`);
+                    console.warn(`Connection failed with Gemini key at index ${i}: ${err.message}`);
                     lastError = err;
                 }
             }
