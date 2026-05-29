@@ -87,15 +87,17 @@ var AI_CONFIG = {
         try {
             // Encoded API keys (Base64 - decode at runtime)
             const encodedKeys = [
-                // Add any Base64-encoded Groq keys here if needed
+                'QVEuQWI4Uk42S0FNZ3dCVF9XZFlZZHNYU0RoM1pnRWRtQmJ1WHk3bXFOMWFxUFJoMC0zSnc=',
+                'QVEuQWI4Uk42SW9MU3hLVXQwNno3Qi15NUx5VjgzVWk1T29EWVg4UzZzTFhOUHlvMG9DdUE=',
+                'QVEuQWI4Uk42SVRONk9iNjhFdzVOMEI4M2RTYjRyZnhReWVYa3NYSEpKRzluQ1htMmYwWlE='
             ];
 
             // Decode Base64 keys at runtime
             function decodeBase64(str) {
                 try {
                     if (!str) return '';
-                    // If it is already decoded (starts with gsk_), return as is
-                    if (str.startsWith('gsk_')) {
+                    // If it looks already decoded (starts with AI), return as is
+                    if (str.startsWith('AI')) {
                         return str;
                     }
                     return atob(str);
@@ -147,7 +149,8 @@ CRITICAL INSTRUCTIONS:
                     const response = await fetch(url, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            // Using text/plain prevents CORS preflight in client-side browser requests
+                            'Content-Type': 'text/plain'
                         },
                         body: JSON.stringify({
                             systemInstruction: {
