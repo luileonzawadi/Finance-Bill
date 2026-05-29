@@ -1,36 +1,119 @@
 // ==========================================
-// AI CONFIGURATION
+// AI CONFIGURATION & UTILITIES
 // ==========================================
 
 var AI_CONFIG = {
     isLive: true,
+
+    // Cleanly formats Markdown syntax (bold, italic, headers, and lists) into safe HTML
+    formatMarkdown(str) {
+        if (!str) return '';
+        
+        // Escape basic HTML tags to prevent arbitrary injection, but allow our markup
+        let html = str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+        
+        // Bold: **text** -> <strong>text</strong>
+        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        
+        // Italic: *text* or _text_ -> <em>text</em>
+        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        html = html.replace(/_(.*?)_/g, '<em>$1</em>');
+        
+        // Process line-by-line for bulleted/numbered lists
+        let lines = html.split('\n');
+        let inList = false;
+        let listType = null; // 'ul' or 'ol'
+        let processed = [];
+        
+        for (let line of lines) {
+            let bulletMatch = line.match(/^(\s*)([-*•])\s+(.*)$/);
+            let numberMatch = line.match(/^(\s*)(\d+\.)\s+(.*)$/);
+            
+            if (bulletMatch) {
+                let content = bulletMatch[3];
+                if (!inList || listType !== 'ul') {
+                    if (inList) {
+                        processed.push(listType === 'ol' ? '</ol>' : '</ul>');
+                    }
+                    processed.push('<ul style="margin-left: 1.2rem; margin-top: 0.4rem; margin-bottom: 0.4rem; list-style-type: disc; display: block;">');
+                    inList = true;
+                    listType = 'ul';
+                }
+                processed.push(`<li style="margin-bottom: 0.25rem; line-height: 1.5;">${content}</li>`);
+            } else if (numberMatch) {
+                let content = numberMatch[3];
+                if (!inList || listType !== 'ol') {
+                    if (inList) {
+                        processed.push(listType === 'ol' ? '</ol>' : '</ul>');
+                    }
+                    processed.push('<ol style="margin-left: 1.2rem; margin-top: 0.4rem; margin-bottom: 0.4rem; display: block;">');
+                    inList = true;
+                    listType = 'ol';
+                }
+                processed.push(`<li style="margin-bottom: 0.25rem; line-height: 1.5;">${content}</li>`);
+            } else {
+                if (inList) {
+                    processed.push(listType === 'ol' ? '</ol>' : '</ul>');
+                    inList = false;
+                    listType = null;
+                }
+                processed.push(line);
+            }
+        }
+        if (inList) {
+            processed.push(listType === 'ol' ? '</ol>' : '</ul>');
+        }
+        
+        html = processed.join('\n');
+        
+        // Headers: ### Header -> <h4>Header</h4>
+        html = html.replace(/^#{1,6}\s+(.*)$/gm, '<h4 style="margin-top: 0.75rem; margin-bottom: 0.4rem; color: var(--text-heading); font-weight: 700; font-size: 0.95rem; line-height: 1.3;">$1</h4>');
+        
+        // Double newlines -> paragraph spacers
+        html = html.replace(/\n{2,}/g, '<div style="margin-bottom: 0.6rem;"></div>');
+        
+        // Single newlines -> <br>
+        html = html.replace(/\n/g, '<br>');
+        
+        return html.trim();
+    },
 
     async call(messages, context) {
         if (!this.isLive) throw new Error("AI not configured.");
 
         try {
             // Encoded API keys (Base64 - decode at runtime)
-            // These values must be kept out of the repo for security.
             const encodedKeys = [
-                // Add your Base64-encoded Groq keys in a local file such as secrets.js
-                // Example: 'Z3NrX3RxR3I4...'
+                // Add any Base64-encoded Groq keys here if needed
             ];
 
             // Decode Base64 keys at runtime
             function decodeBase64(str) {
                 try {
+                    if (!str) return '';
+                    // If it is already decoded (starts with gsk_), return as is
+                    if (str.startsWith('gsk_')) {
+                        return str;
+                    }
                     return atob(str);
                 } catch (e) {
-                    console.error('Failed to decode key');
-                    return '';
+                    console.error('Failed to decode key:', str);
+                    return str; // Fallback as-is
                 }
             }
 
             const localKeys = Array.isArray(window.GROQ_API_KEYS) ? window.GROQ_API_KEYS : [];
             const apiKeys = [
-                ...encodedKeys.map(decodeBase64),
+                ...encodedKeys,
                 ...localKeys
-            ].filter(Boolean);
+            ].map(decodeBase64).filter(Boolean);
+
+            if (apiKeys.length === 0) {
+                throw new Error("No API keys found.");
+            }
 
             const systemPrompt = `You are a warm, helpful, and highly accurate Kenyan Finance Bill AI Advisor. Your absolute priority is accuracy and truth, explained in a friendly, conversational, and easy-to-understand manner.
 Your knowledge base is strictly limited to the provided GROUND TRUTH CONTEXT.
@@ -61,6 +144,10 @@ CRITICAL INSTRUCTIONS:
             let lastError = null;
             for (let i = 0; i < apiKeys.length; i++) {
                 try {
+                    // Set a timeout of 8 seconds per key to handle hangs/delays silently
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
                     const response = await fetch(url, {
                         method: 'POST',
                         headers: {
@@ -72,103 +159,29 @@ CRITICAL INSTRUCTIONS:
                             messages: completionMessages,
                             temperature: 0.1,
                             max_tokens: 1000
-                        })
+                        }),
+                        signal: controller.signal
                     });
+
+                    clearTimeout(timeoutId);
 
                     const data = await response.json();
 
                     if (response.ok) {
                         let text = data.choices[0].message.content;
-                        
-                        // Format Markdown to clean HTML structures safely
-                        function formatMarkdown(str) {
-                            if (!str) return '';
-                            
-                            // Escape basic HTML tags to prevent arbitrary injection, but allow our markup
-                            let html = str
-                                .replace(/&/g, '&amp;')
-                                .replace(/</g, '&lt;')
-                                .replace(/>/g, '&gt;');
-                            
-                            // Bold: **text** -> <strong>text</strong>
-                            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                            
-                            // Italic: *text* or _text_ -> <em>text</em>
-                            html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-                            html = html.replace(/_(.*?)_/g, '<em>$1</em>');
-                            
-                            // Process line-by-line for bulleted/numbered lists
-                            let lines = html.split('\n');
-                            let inList = false;
-                            let listType = null; // 'ul' or 'ol'
-                            let processed = [];
-                            
-                            for (let line of lines) {
-                                let bulletMatch = line.match(/^(\s*)([-*•])\s+(.*)$/);
-                                let numberMatch = line.match(/^(\s*)(\d+\.)\s+(.*)$/);
-                                
-                                if (bulletMatch) {
-                                    let content = bulletMatch[3];
-                                    if (!inList || listType !== 'ul') {
-                                        if (inList) {
-                                            processed.push(listType === 'ol' ? '</ol>' : '</ul>');
-                                        }
-                                        processed.push('<ul style="margin-left: 1.2rem; margin-top: 0.4rem; margin-bottom: 0.4rem; list-style-type: disc; display: block;">');
-                                        inList = true;
-                                        listType = 'ul';
-                                    }
-                                    processed.push(`<li style="margin-bottom: 0.25rem; line-height: 1.5;">${content}</li>`);
-                                } else if (numberMatch) {
-                                    let content = numberMatch[3];
-                                    if (!inList || listType !== 'ol') {
-                                        if (inList) {
-                                            processed.push(listType === 'ol' ? '</ol>' : '</ul>');
-                                        }
-                                        processed.push('<ol style="margin-left: 1.2rem; margin-top: 0.4rem; margin-bottom: 0.4rem; display: block;">');
-                                        inList = true;
-                                        listType = 'ol';
-                                    }
-                                    processed.push(`<li style="margin-bottom: 0.25rem; line-height: 1.5;">${content}</li>`);
-                                } else {
-                                    if (inList) {
-                                        processed.push(listType === 'ol' ? '</ol>' : '</ul>');
-                                        inList = false;
-                                        listType = null;
-                                    }
-                                    processed.push(line);
-                                }
-                            }
-                            if (inList) {
-                                processed.push(listType === 'ol' ? '</ol>' : '</ul>');
-                            }
-                            
-                            html = processed.join('\n');
-                            
-                            // Headers: ### Header -> <h4>Header</h4>
-                            html = html.replace(/^#{1,6}\s+(.*)$/gm, '<h4 style="margin-top: 0.75rem; margin-bottom: 0.4rem; color: var(--text-heading); font-weight: 700; font-size: 0.95rem; line-height: 1.3;">$1</h4>');
-                            
-                            // Double newlines -> paragraph spacers
-                            html = html.replace(/\n{2,}/g, '<div style="margin-bottom: 0.6rem;"></div>');
-                            
-                            // Single newlines -> <br>
-                            html = html.replace(/\n/g, '<br>');
-                            
-                            return html.trim();
-                        }
-
-                        return formatMarkdown(text);
+                        return this.formatMarkdown(text);
                     } else {
                         const errMsg = data.error ? data.error.message : `API returned ${response.status}`;
-                        console.warn(`Groq API key ${i} failed: ${errMsg}`);
+                        console.warn(`Groq API key at index ${i} failed (status ${response.status}): ${errMsg}`);
                         lastError = new Error(errMsg);
                     }
                 } catch (err) {
-                    console.warn(`Connection failed with key ${i}: ${err.message}`);
+                    console.warn(`Connection failed with Groq key at index ${i}: ${err.message}`);
                     lastError = err;
                 }
             }
 
-            throw lastError || new Error("All API keys failed. Please try again later.");
+            throw lastError || new Error("All API keys failed.");
         } catch (error) {
             console.error('AI Config Error:', error.message);
             throw error;

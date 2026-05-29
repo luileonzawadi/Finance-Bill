@@ -145,13 +145,234 @@ document.addEventListener('DOMContentLoaded', () => {
         aiChatBody.scrollTop = aiChatBody.scrollHeight;
     };
 
-    // Render stored chat history if present
-    if (chatHistory && chatHistory.length > 0 && aiChatBody) {
-        aiChatBody.innerHTML = ''; // Clear default greeting to avoid repetition
-        chatHistory.forEach(msg => {
-            const roleType = (msg.role === 'assistant' || msg.role === 'bot') ? 'bot' : 'user';
-            addMessage(msg.content, roleType);
+    // Set AI status label dynamically
+    const connectionStatusEl = document.getElementById('ai-connection-status');
+    const config = window.AI_CONFIG;
+    if (connectionStatusEl) {
+        if (config && config.isLive) {
+            connectionStatusEl.textContent = 'Live Intelligence Active';
+        } else {
+            connectionStatusEl.textContent = 'Local AI Engine Active';
+        }
+    }
+
+    // Helper to dynamically parse the official Finance Bill context into search-ready sections
+    function parseKnowledgeBase(context) {
+        if (!context) return [];
+        const lines = context.split('\n');
+        const sections = [];
+        let currentSection = null;
+        let currentPart = "";
+        let currentSectionHeader = "";
+
+        for (let line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed) continue;
+            if (trimmed.startsWith('===')) continue;
+
+            if (trimmed.startsWith('PART ')) {
+                currentPart = trimmed;
+                continue;
+            }
+            if (trimmed.startsWith('SECTION ')) {
+                currentSectionHeader = trimmed;
+                continue;
+            }
+
+            const isNewPoint = /^\d+\.\s+/.test(trimmed);
+            const isSummaryHeader = trimmed.startsWith('THINGS THAT WILL ') || 
+                                    trimmed.startsWith('NEW TAXES ON ') || 
+                                    trimmed.startsWith('BUSINESSES:') || 
+                                    trimmed.startsWith('AI ADVISOR ') ||
+                                    trimmed.startsWith('SUMMARY:');
+
+            if (isNewPoint || isSummaryHeader) {
+                if (currentSection) sections.push(currentSection);
+                
+                let title = trimmed;
+                if (isNewPoint) {
+                    title = trimmed.replace(/^\d+\.\s+/, '');
+                }
+                
+                currentSection = {
+                    title: title,
+                    header: trimmed,
+                    part: currentPart,
+                    sectionHeader: currentSectionHeader,
+                    content: [trimmed],
+                    type: isNewPoint ? 'point' : 'summary'
+                };
+            } else {
+                if (currentSection) {
+                    currentSection.content.push(line);
+                } else {
+                    currentSection = {
+                        title: "General Information",
+                        header: "General Information",
+                        part: currentPart,
+                        sectionHeader: currentSectionHeader,
+                        content: [line],
+                        type: 'general'
+                    };
+                }
+            }
+        }
+        if (currentSection) sections.push(currentSection);
+
+        return sections.map(sec => {
+            const rawContent = sec.content.join('\n');
+            const cleanText = rawContent.toLowerCase().replace(/[^\w\s-]/g, ' ').replace(/[-\s]+/g, ' ');
+            const words = cleanText.split(' ').filter(w => w.length > 2);
+            
+            const stopWords = new Set([
+                'the', 'and', 'for', 'now', 'new', 'not', 'will', 'are', 'that', 'this', 'with', 'from', 'under', 'into',
+                'na', 'ya', 'kwa', 'kila', 'kama', 'kuhusu', 'hivi', 'huyu', 'hilo', 'hiyo', 'ambayo', 'sana', 'zaidi',
+                'has', 'been', 'with', 'made', 'paid', 'fees', 'rate', 'rates', 'tax', 'taxes', 'levy', 'levies',
+                'kodi', 'ushuru', 'mswada', 'fedha'
+            ]);
+            const keywords = [...new Set(words.filter(w => !stopWords.has(w)))];
+
+            return {
+                title: sec.title,
+                header: sec.header,
+                part: sec.part,
+                sectionHeader: sec.sectionHeader,
+                rawContent: rawContent,
+                keywords: keywords
+            };
         });
+    }
+
+    const parsedSections = parseKnowledgeBase(FINANCE_BILL_CONTEXT);
+
+    const SYNONYM_MAP = {
+        'mkate': ['bread', 'loaf', 'bakers', 'bakery'],
+        'boflo': ['bread', 'loaf'],
+        'gari': ['vehicle', 'car', 'motor'],
+        'magari': ['vehicle', 'car', 'motor'],
+        'nyumba': ['housing', 'house', 'construction', 'loan'],
+        'simu': ['phone', 'cellular', 'smartphone', 'electronics'],
+        'betri': ['battery', 'lithium', 'electronics'],
+        'chuma': ['scrap', 'metal', 'copper'],
+        'mshahara': ['salary', 'employee', 'benefits', 'income', 'paye'],
+        'marupurupu': ['benefit', 'threshold', 'perks', 'non-cash'],
+        'kodi': ['tax', 'levy', 'duty', 'wht', 'vat', 'withholding'],
+        'ushuru': ['tax', 'levy', 'duty', 'wht', 'vat', 'withholding'],
+        'mazingira': ['eco', 'environmental', 'plastic', 'packaging'],
+        'deni': ['debt', 'borrow', 'repay', 'loans'],
+        'madeni': ['debt', 'borrow', 'repay', 'loans'],
+        'mafuta': ['fuel', 'pump', 'road maintenance', 'levy'],
+        'biashara': ['business', 'merchant', 'etims', 'traders'],
+        'faida': ['winnings', 'gambling', 'betting'],
+        'michezo': ['gambling', 'betting'],
+        'yutuba': ['youtube', 'creator', 'tiktok', 'digital content'],
+        'yutub': ['youtube', 'creator', 'tiktok', 'digital content'],
+        'wavuti': ['digital', 'online', 'software', 'platform'],
+        'penalti': ['penalties', 'non-compliance', 'fine'],
+        'adhabu': ['penalties', 'non-compliance', 'fine'],
+        'maisha': ['impact', 'cost of living', 'mwananchi'],
+        'hustler': ['small business', 'informal', 'etims', 'mwananchi'],
+        'wananchi': ['ordinary', 'kenyan', 'citizen', 'mwananchi'],
+        'boda': ['motorcycle', 'electric', 'vat', 'transportation'],
+        'solar': ['panels', 'energy', 'vat'],
+        'fuel': ['road maintenance', 'pump', 'petrol', 'diesel'],
+        'creators': ['monetization', 'content', 'youtube', 'tiktok', 'instagram'],
+        'influencer': ['monetization', 'content', 'youtube', 'tiktok', 'instagram'],
+        'etims': ['etims', 'invoice', 'reporting', 'compliance'],
+        'wht': ['withholding'],
+        'vat': ['value added', 'zero-rated', 'exempt'],
+        'dst': ['digital services', 'streaming', 'marketplace']
+    };
+
+    function getLocalResponse(queryText, userLang, isSwahiliQuery) {
+        const cleanQuery = queryText.toLowerCase().replace(/[^\w\s-]/g, ' ');
+        const queryWords = cleanQuery.split(/\s+/).filter(w => w.length > 1);
+        
+        if (queryWords.length === 0) {
+            return userLang === 'sw' 
+                ? "Habari! Mimi ni AI Advisor wako. Tafadhali uliza swali kuhusu Mswada wa Fedha wa Kenya (kama vile ushuru wa gari, mkate, au eco levy)."
+                : "Hello! I am your local AI Advisor. Please type a question about the Kenya Finance Bill (e.g., motor vehicle tax, bread VAT, eco levy).";
+        }
+
+        // Expand query words with synonyms
+        let expandedQueryWords = [...queryWords];
+        queryWords.forEach(word => {
+            if (SYNONYM_MAP[word]) {
+                expandedQueryWords = expandedQueryWords.concat(SYNONYM_MAP[word]);
+            }
+        });
+        expandedQueryWords = [...new Set(expandedQueryWords)];
+
+        // Rank sections
+        let bestSection = null;
+        let highestScore = 0;
+
+        parsedSections.forEach(section => {
+            let score = 0;
+
+            // 1. Keyword match score
+            section.keywords.forEach(kw => {
+                if (expandedQueryWords.includes(kw)) {
+                    score += 1.5;
+                }
+            });
+
+            // 2. Title match bonus
+            const titleLower = section.title.toLowerCase();
+            expandedQueryWords.forEach(qw => {
+                if (titleLower.includes(qw)) {
+                    score += 4.0;
+                }
+            });
+
+            // 3. Exact phrase match bonus
+            const phrases = ["motor vehicle", "eco levy", "withholding tax", "digital services", "scrap metal", "road maintenance", "non resident", "housing loan", "gratuity exemption"];
+            phrases.forEach(phrase => {
+                if (cleanQuery.includes(phrase) && section.rawContent.toLowerCase().includes(phrase)) {
+                    score += 10.0;
+                }
+            });
+
+            if (score > highestScore) {
+                highestScore = score;
+                bestSection = section;
+            }
+        });
+
+        // Threshold check
+        if (highestScore < 2.0 || !bestSection) {
+            if (userLang === 'sw' || isSwahiliQuery) {
+                return "Habari! Siwezi kupata maelezo kamili kuhusu swali hilo kwenye Mswada wa Fedha wa 2026. <br><br>Tafadhali jaribu kuuliza kuhusu: <strong>kodi ya mkate (VAT)</strong>, <strong>kodi ya magari (motor vehicle tax)</strong>, <strong>kodi ya mazingira (eco levy)</strong>, <strong>mifumo ya eTIMS</strong>, au <strong>ushuru wa waundaji wa maudhui (content creators WHT)</strong>.";
+            } else {
+                return "Hello! I couldn't find specific details for that query in the official 2026 Finance Bill knowledge base. <br><br>Try asking about trending topics like: <strong>bread VAT</strong>, <strong>motor vehicle tax</strong>, <strong>eco levy on electronics</strong>, <strong>eTIMS compliance</strong>, or <strong>withholding tax on digital content</strong>.";
+            }
+        }
+
+        // Format the content
+        let formattedContent = bestSection.rawContent;
+        if (window.AI_CONFIG && typeof window.AI_CONFIG.formatMarkdown === 'function') {
+            formattedContent = window.AI_CONFIG.formatMarkdown(bestSection.rawContent);
+        } else {
+            formattedContent = bestSection.rawContent
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>')
+                .replace(/-\s+(.*?)(?=<br>|$)/g, '<li style="margin-left: 1rem; margin-bottom: 0.25rem;">$1</li>');
+        }
+
+        // Return themed response
+        if (userLang === 'sw' || isSwahiliQuery) {
+            return `Habari! Hapa kuna maelezo rasmi kuhusu <strong>${bestSection.title}</strong> kutoka kwenye Mswada wa Fedha wa 2026:<br><br>
+            <div style="background: rgba(0, 0, 0, 0.02); padding: 1rem; border-left: 4px solid var(--red); border-radius: 4px; margin-bottom: 0.5rem;">
+                ${formattedContent}
+            </div><br>
+            Je, kuna jambo lingine ungependa kufahamu kuhusu ushuru huu?`;
+        } else {
+            return `Hello! Here is the official information regarding <strong>${bestSection.title}</strong> from the Finance Bill 2026:<br><br>
+            <div style="background: rgba(0, 0, 0, 0.02); padding: 1rem; border-left: 4px solid var(--red); border-radius: 4px; margin-bottom: 0.5rem;">
+                ${formattedContent}
+            </div><br>
+            Let me know if you need more details or have another question!`;
+        }
     }
 
     const simulateResponse = (text) => {
@@ -190,7 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 keys: ["scrap", "junk", "metal"],
                 sw_keys: ["chuma", "chakavu", "recycling"],
                 reply: "Hello! Regarding scrap metal: The bill introduces a Withholding Tax on the sale of scrap metal to formalize the sector, ensuring traders and recyclers are taxed at the point of sale.",
-                sw_reply: "Habari! Kuhusu chuma chakavu: Mswada unaleta Kodi ya Zuio (Withholding Tax) kwenye uuzaji wa chuma chakavu ili kuleta sekta hii isiyo rasmi kwenye mfumo wa kodi."
+                sw_reply: "Habari! Kuhusu chuma chakavu: Mswada unaleta Kodi ya Zuio (Withholding Tax) kwenye uuzaji wa chuma chakavu ili kuleta sekta hii isiyo rasmi kwenye mfumo vya kodi."
             },
             {
                 keys: ["software", "royalt", "digital", "online", "internet", "resident", "non-resident"],
@@ -230,7 +451,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         ];
 
-        // Glossary of key finance bill terms
         const glossary = {
             "finance bill": "The Finance Bill outlines tax proposals, levies, and fiscal measures for the fiscal year.",
             "vat": "Value Added Tax, a consumption tax applied to goods and services, currently 16% in Kenya.",
@@ -243,14 +463,14 @@ document.addEventListener('DOMContentLoaded', () => {
             "digital services tax": "Tax on digital platform revenues.",
             "bread vat": "Zero-rated VAT on basic bread to keep prices low."
         };
-        // If language already chosen, ensure no leftover modal blocks UI
+
         if (sessionStorage.getItem('finance_chat_lang')) {
             const existingOverlay = document.querySelector('.lang-modal-overlay');
             const existingModal = document.getElementById('lang-modal');
             if (existingOverlay) existingOverlay.remove();
             if (existingModal) existingModal.remove();
         }
-        // If not set, show modal to choose language
+
         if (!sessionStorage.getItem('finance_chat_lang')) {
             const modal = document.createElement('div');
             modal.id = 'lang-modal';
@@ -264,72 +484,133 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             document.body.appendChild(modal);
             document.getElementById('lang-en').addEventListener('click', () => {
-                userLang = 'en';
                 sessionStorage.setItem('finance_chat_lang', 'en');
                 modal.remove();
+                processResponse();
             });
             document.getElementById('lang-sw').addEventListener('click', () => {
-                userLang = 'sw';
                 sessionStorage.setItem('finance_chat_lang', 'sw');
                 modal.remove();
+                processResponse();
             });
-        }
-        // Declare response and language preference up front
-        let userLang = sessionStorage.getItem('finance_chat_lang') || 'en';
-        let response = "";
-
-        // Check for glossary term definitions before regular matching
-        const lowerText = text.toLowerCase();
-        for (const term in glossary) {
-            if (lowerText.includes(term)) {
-                const def = glossary[term];
-                response = userLang === 'sw' ? `Habari! ${def}` : `Hello! ${def}`;
-                break;
-            }
+            return;
         }
 
-        if (!response) {
-            // Detect if user query contains Swahili terms
-            const swahiliIndicators = ["habari", "mambo", "vipi", "kodi", "gari", "mkate", "wananchi", "athari", "ushuru", "nyumba", "deni", "nini", "kwa", "na", "ya", "ni", "sana", "karibu", "habari yako"];
-            const isSwahiliQuery = swahiliIndicators.some(indicator => text.includes(indicator));
+        processResponse();
 
-            let matched = null;
-            let matchedInSwahili = false;
+        function processResponse() {
+            let userLang = sessionStorage.getItem('finance_chat_lang') || 'en';
+            let response = "";
+            const lowerText = text.toLowerCase();
 
-            // Try to match Swahili keywords first
-            for (const item of botResponses) {
-                if (item.sw_keys.some(k => text.includes(k))) {
-                    matched = item;
-                    matchedInSwahili = true;
+            // 1. Check Glossary
+            for (const term in glossary) {
+                if (lowerText.includes(term)) {
+                    const def = glossary[term];
+                    response = userLang === 'sw' ? `Habari! ${def}` : `Hello! ${def}`;
                     break;
                 }
             }
 
-            // If no Swahili match, try English
-            if (!matched) {
-                for (const item of botResponses) {
-                    if (item.keys.some(k => text.includes(k))) {
-                        matched = item;
-                        break;
+            if (!response) {
+                const swahiliIndicators = ["habari", "mambo", "vipi", "kodi", "gari", "mkate", "wananchi", "athari", "ushuru", "nyumba", "deni", "nini", "kwa", "na", "ya", "ni", "sana", "karibu", "habari yako", "boda", "chuma", "mshahara", "adhabu", "marupurupu"];
+                const isSwahiliQuery = swahiliIndicators.some(indicator => lowerText.includes(indicator));
+
+                // 2. Score Curated Responses
+                let bestCurated = null;
+                let highestCuratedScore = 0;
+                let matchedInSwahili = false;
+
+                botResponses.forEach(item => {
+                    let score = 0;
+                    item.keys.forEach(k => {
+                        if (lowerText.includes(k)) score += 3;
+                    });
+                    item.sw_keys.forEach(k => {
+                        if (lowerText.includes(k)) {
+                            score += 3;
+                            matchedInSwahili = true;
+                        }
+                    });
+
+                    if (score > highestCuratedScore) {
+                        highestCuratedScore = score;
+                        bestCurated = item;
                     }
+                });
+
+                // 3. Get Dynamic Local Response
+                const dynamicResponse = getLocalResponse(text, userLang, isSwahiliQuery);
+
+                if (highestCuratedScore >= 3 && bestCurated) {
+                    const specificDetailsKeywords = ["rate", "percentage", "amount", "fine", "penalty", "penalties", "shilingi", "ksh", "timeline", "days", "years", "exemption", "non-resident", "etims", "gratuity", "shipping", "laptops", "diapers", "plastic"];
+                    const wantsSpecificDetails = specificDetailsKeywords.some(kw => lowerText.includes(kw));
+
+                    if (wantsSpecificDetails && highestCuratedScore < 6) {
+                        response = dynamicResponse;
+                    } else {
+                        response = (userLang === 'sw' || matchedInSwahili) ? bestCurated.sw_reply : bestCurated.reply;
+                    }
+                } else {
+                    response = dynamicResponse;
                 }
             }
 
-            if (matched) {
-                response = (isSwahiliQuery || matchedInSwahili) ? matched.sw_reply : matched.reply;
-            } else {
-                response = isSwahiliQuery
-                    ? "Habari! Ninaweza kujibu maswali kuhusu Mswada wa Fedha wa Kenya 2025/2026 pekee. Jaribu kuuliza kuhusu: kodi ya mkate (VAT), kodi ya gari (motor vehicle tax), kodi ya mazingira (eco levy), ushuru wa KRA, au athari kwa mwananchi. Karibu!"
-                    : "Hello! I can answer questions about the Kenyan Finance Bill 2025/2026. Try asking about: bread VAT, motor vehicle tax, eco levy, housing levy, digital services, KRA enforcement, or the impact on citizens. Let me know how I can help!";
-            }
+            // Save response to history
+            chatHistory.push({ role: 'assistant', content: response });
+            saveHistory();
+
+            addMessage(response, 'bot');
         }
-
-        // Save response to history
-        chatHistory.push({ role: 'assistant', content: response });
-        saveHistory();
-
-        addMessage(response, 'bot');
     };
+
+    // Helper for rendering quick suggestion chips in the chat
+    const initSuggestionChips = () => {
+        if (!aiChatBody) return;
+        if (chatHistory && chatHistory.length > 0) return; // Don't show if conversation exists
+        
+        // Remove existing container if any
+        const existingContainer = aiChatBody.querySelector('.ai-chips-container');
+        if (existingContainer) existingContainer.remove();
+        
+        const container = document.createElement('div');
+        container.className = 'ai-chips-container';
+        container.innerHTML = `
+            <button class="ai-chip" data-query="Does bread have VAT?">🍞 Bread VAT</button>
+            <button class="ai-chip" data-query="How much is the Motor Vehicle Tax?">🚗 Motor Vehicle Tax</button>
+            <button class="ai-chip" data-query="What is the Eco Levy on laptops?">📱 Eco Levy</button>
+            <button class="ai-chip" data-query="Are content creators taxed?">💼 Creators WHT</button>
+            <button class="ai-chip" data-query="What is eTIMS?">📊 eTIMS System</button>
+        `;
+        
+        aiChatBody.appendChild(container);
+        
+        container.querySelectorAll('.ai-chip').forEach(chip => {
+            chip.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (aiInput) {
+                    aiInput.value = chip.dataset.query;
+                    handleAISend();
+                }
+            });
+        });
+        
+        aiChatBody.scrollTop = aiChatBody.scrollHeight;
+    };
+
+    // Render stored chat history or suggestion chips
+    if (aiChatBody) {
+        if (chatHistory && chatHistory.length > 0) {
+            aiChatBody.innerHTML = ''; // Clear default greeting to avoid repetition
+            chatHistory.forEach(msg => {
+                const roleType = (msg.role === 'assistant' || msg.role === 'bot') ? 'bot' : 'user';
+                addMessage(msg.content, roleType);
+            });
+        } else {
+            // Append suggestion chips under the initial greeting
+            setTimeout(initSuggestionChips, 150);
+        }
+    }
 
     const handleAISend = async () => {
         const rawText = aiInput.value.trim();
@@ -377,16 +658,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 addMessage(aiResponse, 'bot');
             } catch (error) {
-                console.error("AI Error:", error);
-                typing.remove();
-                addMessage('Let me check my offline knowledge base for that...', 'bot');
-                setTimeout(() => simulateResponse(rawText.toLowerCase()), 1500);
+                // Silent fallback to local AI search engine immediately
+                console.warn("API call failed, falling back to local engine:", error);
+                setTimeout(() => {
+                    typing.remove();
+                    simulateResponse(rawText);
+                }, 600);
             }
         } else {
             setTimeout(() => {
                 typing.remove();
-                simulateResponse(rawText.toLowerCase());
-            }, 1500);
+                simulateResponse(rawText);
+            }, 600);
         }
     };
 
@@ -414,7 +697,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Dynamic CSS for animations
+    // Dynamic CSS for animations and suggestion chips
     const style = document.createElement('style');
     style.innerHTML = `
         .reveal-hidden {
@@ -426,7 +709,31 @@ document.addEventListener('DOMContentLoaded', () => {
             opacity: 1;
             transform: translateY(0);
         }
-
+        .ai-chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin: 0.75rem 0;
+            padding: 0 0.5rem;
+        }
+        .ai-chip {
+            background: rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .ai-chip:hover {
+            background: #C60000 !important;
+            color: white !important;
+            border-color: #C60000 !important;
+            transform: translateY(-1px);
+        }
     `;
     document.head.appendChild(style);
 // Countdown Timer

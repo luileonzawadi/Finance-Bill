@@ -96,7 +96,8 @@ FOOTER = """    <footer>
     </div>
 </footer>"""
 
-SCRIPTS = """    <script src="config.js"></script>
+SCRIPTS = """    <script src="secrets.js"></script>
+    <script src="config.js"></script>
     <script src="knowledge_base.js"></script>
     <script src="layout.js"></script>
     <script src="script.js"></script>
