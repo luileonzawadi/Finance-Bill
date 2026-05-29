@@ -123,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.innerHTML = `
             <div class="lang-modal-overlay"></div>
             <div class="lang-modal-content">
-                <div class="lang-modal-icon">🌍</div>
                 <h3>Choose Your Language</h3>
                 <p>Chagua lugha yako / Select your language</p>
                 <div class="lang-btn-group">
@@ -504,6 +503,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 sw_reply: "Habari! Kuhusu athari kwa wananchi: Mambo makuu ni kupanda kwa gharama ya maisha (kodi ya eco), ufuatiliaji mkali wa kodi kwa biashara ndogo ndogo, na kodi mpya ya kila mwaka ya magari."
             },
             {
+                keys: ["rent", "rental", "landlord", "property"],
+                sw_keys: ["kodi ya nyumba", "kodi ya pango", "pango", "mpangaji", "mwenye nyumba"],
+                reply: "Hello! Regarding rental income tax: The Finance Bill 2026 proposes to increase the Monthly Rental Income (MRI) tax rate for resident landlords from the current 7.5% to 10% of gross rent. Additionally, it introduces a new digital registration and final withholding tax framework for non-resident landlords.",
+                sw_reply: "Habari! Kuhusu ushuru wa kodi ya nyumba (rental income tax): Mswada wa Fedha wa 2026 unapendekeza kuongeza kiwango cha kodi ya pango (Monthly Rental Income tax) kwa wamiliki wa nyumba wakaazi kutoka 7.5% hadi 10% ya mapato yote ya pango. Pia, unaanzisha mfumo mpya wa kidijitali wa usajili na kodi ya zuio kwa wamiliki wa nyumba wasio wakaazi."
+            },
+            {
+                keys: ["amnesty", "waiver", "relief"],
+                sw_keys: ["msamaha", "msamaha wa kodi", "faini"],
+                reply: "Hello! Regarding the Tax Amnesty Program: The Finance Bill 2026 proposes a tax amnesty program with a deadline of December 31, 2026. Taxpayers who settle their principal tax liabilities by this date will receive a 100% waiver on accrued interest, penalties, and fines.",
+                sw_reply: "Habari! Kuhusu mpango wa msamaha wa kodi (Tax Amnesty): Mswada unapendekeza mpango wa kutoa msamaha wa 100% wa faini, riba, na adhabu zote iwapo mlipakodi atalipa kodi ya msingi (principal tax) ifikapo tarehe 31 Desemba, 2026."
+            },
+            {
+                keys: ["withholding", "wht", "creator", "youtube", "tiktok", "scrap", "interchange"],
+                sw_keys: ["kodi ya zuio", "zuio", "undaji wa maudhui", "chuma", "mastercard", "visa"],
+                reply: "Hello! The bill significantly expands Withholding Tax (WHT) to several areas: (1) 5% WHT for resident and 20% WHT for non-resident digital content creators, (2) WHT on the sale of scrap metal, and (3) WHT on digital transaction fees like merchant and interchange fees charged by banks and card networks (Visa/Mastercard). Remittances are generally due by the 20th of the following month.",
+                sw_reply: "Habari! Mswada unapanua kodi ya zuio (Withholding Tax - WHT) katika maeneo kadhaa: (1) 5% kwa waundaji wa maudhui wakaazi na 20% kwa wasio wakaazi, (2) kodi ya zuio kwenye uuzaji vya chuma chakavu, na (3) kodi ya zuio kwenye ada za miamala ya kidijitali (merchant/interchange fees) za benki na kadi (Visa/Mastercard). Makato hayo yanapaswa kutumwa KRA ifikapo tarehe 20 ya mwezi unaofuata."
+            },
+            {
+                keys: ["vat on fees", "digital payment vat", "card fees vat", "transaction vat"],
+                sw_keys: ["vat ya kadi", "ada za benki vat"],
+                reply: "Hello! The Finance Bill 2026 proposes to apply a standard 16% VAT on digital payment transaction fees, merchant service fees, and card processing fees (like Visa/Mastercard processing charges), which were previously exempt. This will increase transaction fees charged by banks and digital payment service providers.",
+                sw_reply: "Habari! Mswada wa Fedha wa 2026 unapendekeza kutoza kodi ya VAT ya 16% kwenye ada za miamala ya kidijitali, ada za kadi, na huduma za malipo (kama vile ada za Visa na Mastercard) ambazo zilikuwa hazitozwi VAT. Hii itaongeza gharama za miamala ya malipo ya kidijitali."
+            },
+            {
+                keys: ["deadline", "deadlines", "filing", "due date", "calendar"],
+                sw_keys: ["tarehe ya mwisho", "mwisho wa kulipa", "siku"],
+                reply: "Hello! The bill establishes strict filing and payment timelines: (1) eTIMS invoices must be reported in real-time, (2) Non-Resident Rental Income Tax must be paid by the 20th of the following month, (3) Maritime Shipping Tax must be paid within 5 days of port departure or payment receipt, and (4) Tax appeal/objection timelines are tightened to run on calendar days instead of working days.",
+                sw_reply: "Habari! Mswada unaweka tarehe kali za mwisho za kulipa na kuwasilisha ripoti za kodi: (1) ankara za eTIMS lazima ziwasilishwe kwa wakati halisi (real-time), (2) kodi ya pango ya wasio wakaazi inapaswa kulipwa kufikia tarehe 20 ya mwezi unaofuata, (3) kodi ya usafirishaji baharini ilipwe ndani ya siku 5, na (4) siku za rufaa ya kodi zitahesabiwa kwa siku za kalenda badala ya siku za kazi."
+            },
+            {
                 keys: ["income", "salary", "paye", "withhold"],
                 sw_keys: ["mshahara", "paye", "ajira", "makato"],
                 reply: "Hello! Regarding employment tax: PAYE brackets remain active, and withholding taxes are expanded to informal transactions (like scrap metal) and digital cards to widen the net.",
@@ -801,10 +830,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         #lang-modal.lang-modal-visible .lang-modal-content {
             transform: translateY(0);
-        }
-        .lang-modal-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.75rem;
         }
         .lang-modal-content h3 {
             font-family: 'Outfit', sans-serif;

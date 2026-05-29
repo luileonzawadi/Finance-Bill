@@ -58,14 +58,20 @@ SECTION 5 — EMPLOYMENT INCOME:
      * The exempt amount is capped at 31% of the employee's basic salary per year of service.
    - Gratuity paid to employees who served less than 3 years will be subject to income tax.
 
-SECTION 6B — NON-RESIDENT RENTAL INCOME TAX (NEW):
+SECTION 6B — RENTAL INCOME TAX PROVISIONS (RESIDENT & NON-RESIDENT):
 
-6. RENTAL INCOME TAX FOR NON-RESIDENTS:
+6. RENTAL INCOME TAX FOR NON-RESIDENTS (NEW):
    - A new final withholding tax is introduced on rental income earned in Kenya by non-resident persons.
    - Non-residents who own property in Kenya (e.g. diaspora landlords living abroad) must now pay Kenyan rental income tax.
    - Registration: Non-residents must register on a simplified KRA digital portal.
    - Filing and Payment: Must file and pay by the 20th day of the month following the month in which rent was received.
    - Alternative: A resident agent can deduct and remit WHT on behalf of the non-resident landlord under Section 35(3)(j).
+
+6B. RESIDENT RENTAL INCOME TAX RATE INCREASE:
+   - Proposes to increase the Monthly Rental Income (MRI) tax rate for resident landlords.
+   - Previous rate: 7.5% of gross rental receipts.
+   - New proposed rate: 10% of gross rental receipts.
+   - This increases the tax liability for resident property owners earning rental income below the Ksh 15 million annual threshold.
 
 SECTION 9 — SHIPPING TAX:
 
@@ -225,6 +231,16 @@ PART IV — TAX PROCEDURES ACT AMENDMENTS (No. 29 of 2015)
     - Failure to register for tax: Ksh 100,000 fine.
     - Failure to use eTIMS: Penalties and potential business closure.
     - Obstruction of KRA officers during audit or inspection: Criminal prosecution.
+
+23B. TAX AMNESTY PROGRAM:
+    - Offers 100% waiver of penalties, interest, and fines if the principal tax liability is fully settled by December 31, 2026.
+    - Designed to help taxpayers clean up tax arrears and encourage voluntary disclosure.
+
+23C. TIGHTENED FILING & PAYMENT TIMELINES:
+    - eTIMS: Invoices must be transmitted in real-time at the point of sale.
+    - Non-Resident Rental Income Tax: Return and payment due by the 20th of the following month.
+    - Shipping Income Tax: Due within 5 days of payment receipt or ship port departure.
+    - Withholding Taxes: Remittance due by the 20th day of the following month.
 
 =======================================================
 PART V — MISCELLANEOUS FEES AND LEVIES ACT AMENDMENTS
