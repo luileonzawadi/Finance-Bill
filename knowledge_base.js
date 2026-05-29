@@ -188,6 +188,15 @@ PART III — EXCISE DUTY ACT AMENDMENTS (No. 23 of 2015)
     - Purpose: To encourage local phone assembly and manufacturing in Kenya and reduce dependence on fully imported devices.
     - Impact: Imported smartphones and feature phones will be significantly more expensive. Locally assembled phones will be comparatively cheaper.
 
+19B. EXCISE DUTY ON VINTAGE / ANTIQUE / CLASSIC VEHICLES (NEW):
+    - The Finance Bill 2026 introduces a brand-new 50% excise duty on antique, vintage, and classic motor vehicles.
+    - Definition of "Vintage": A motor vehicle that was FIRST REGISTERED at least 30 years before the date of purchase.
+    - Value Threshold: Only vehicles valued at KSh 10 million or MORE (exclusive of depreciation) are subject to this duty.
+    - This is explicitly framed as a LUXURY TAX targeting high-value collector vehicles and classic car enthusiasts.
+    - Vehicles below KSh 10 million in value are NOT affected by this excise duty.
+    - Expected effective date: July 1, 2026 (if enacted into law).
+    - Source: Confirmed by the official Finance Bill 2026 gazette, EY Kenya tax summary, KPMG Kenya analysis, and widely reported by Kenyan media outlets.
+
 20. ROAD MAINTENANCE LEVY — REDUCTION:
     - The Road Maintenance Levy charged on fuel is being REDUCED.
     - Purpose: To lower fuel pump prices and reduce transport and logistics costs for businesses and ordinary citizens.
