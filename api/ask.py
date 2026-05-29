@@ -2,7 +2,8 @@ import os
 import re
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from groq import Groq
 
 load_dotenv()
@@ -304,3 +305,101 @@ async def ask(request: Request):
         return JSONResponse({"error": "Missing query field"}, status_code=400)
     answer = call_groq(query)
     return JSONResponse({"answer": answer})
+
+@app.post("/api/chat")
+async def chat(request: Request):
+    try:
+        payload = await request.json()
+        messages = payload.get("messages", [])
+        context = payload.get("context", "")
+
+        if not messages or not context:
+            return JSONResponse({"error": "Missing required fields: messages and context"}, status_code=400)
+        
+        keys = get_groq_keys()
+        if not keys:
+            return JSONResponse({"error": "Something went wrong. Please try again in a moment."}, status_code=500)
+
+        system_prompt = f"""You are a warm, helpful, and highly accurate Kenyan Finance Bill AI Advisor. Your absolute priority is accuracy and truth, explained in a friendly, conversational, and easy-to-understand manner.
+Your knowledge base is strictly limited to the provided GROUND TRUTH CONTEXT.
+
+GROUND TRUTH CONTEXT:
+{context}
+
+CRITICAL INSTRUCTIONS:
+1. STRICT TOPIC GUARD: You MUST ONLY answer questions directly related to Kenya's economy, taxes, fiscal policy, or the Finance Bills (2025 and 2026).
+   If the user asks an off-topic question (anything unrelated to economy, taxes, or the Finance Bill, such as general advice, history of other topics, programming, creative writing, science, etc.), you MUST reply with this exact message:
+   "I can only answer questions related to the Kenyan Finance Bill, taxes, and the economy. Please ask a question related to these topics."
+2. NO HALLUCINATIONS: Do not invent, extrapolate, or assume any information, tax rates, rates, timelines, or provisions not explicitly mentioned in the GROUND TRUTH CONTEXT. If the context does not contain the answer, you must state: "I cannot find that information in the official 2025/2026 Finance Bill documents."
+3. WARM & HUMAN TONE: Be warm, polite, and explanatory. Respond nicely, use friendly greetings, and explain tax concepts simply (relating to everyday Kenyan life like boda boda, mama mboga, matatus, or dukas if helpful). Do not say "Based on the context" or "As an AI..." but do greet the user nicely and explain with friendly, human warmth.
+4. ACCURACY IS PARAMOUNT: Statically compare 2025 and 2026 ONLY when the user explicitly asks for comparison. Use 2026 as the default for current questions.
+5. MEMORY AND CONTINUITY: You will receive the conversation history. Review past exchanges to maintain continuity, identify references, and build upon previous answers naturally.
+6. LANGUAGE: Match the language of the user's question exactly (English, Swahili, or Sheng).
+   - If they write in Swahili, respond in warm, polite Swahili (Kiswahili). Use phrases like "Habari!", "Asante kwa swali lako," "Kwa ufupi," or "Karibu!" to sound welcoming.
+   - If they write in Sheng, respond in warm, natural Sheng to make them feel comfortable, while keeping tax terms clear."""
+
+        completion_messages = [{"role": "system", "content": system_prompt}]
+        for msg in messages:
+            completion_messages.append({
+                "role": msg.get("role"),
+                "content": msg.get("content")
+            })
+
+        last_error = None
+        for key in keys:
+            try:
+                client = Groq(api_key=key)
+                completion = client.chat.completions.create(
+                    model="llama-3.3-70b-versatile",
+                    messages=completion_messages,
+                    temperature=0.1,
+                    max_tokens=1000,
+                )
+                success_response = completion.choices[0].message.content
+                return JSONResponse({"response": success_response})
+            except Exception as e:
+                last_error = e
+                continue
+
+        return JSONResponse({"error": f"Something went wrong. Error: {str(last_error)}"}, status_code=500)
+    except Exception as e:
+        return JSONResponse({"error": f"Server Error: {str(e)}"}, status_code=500)
+
+ALLOWED_STATIC_FILES = {
+    "index.html",
+    "analysis.html",
+    "comparison.html",
+    "impact.html",
+    "style.css",
+    "script.js",
+    "config.js",
+    "knowledge_base.js",
+    "layout.js",
+    "robots.txt",
+    "sitemap.xml"
+}
+
+@app.get("/")
+async def serve_index():
+    return FileResponse("index.html")
+
+@app.get("/{filename}")
+async def get_static_file(filename: str):
+    target = filename
+    if "." not in target:
+        html_file = f"{target}.html"
+        if html_file in ALLOWED_STATIC_FILES:
+            target = html_file
+
+    if target in ALLOWED_STATIC_FILES:
+        file_path = os.path.join(".", target)
+        if os.path.exists(file_path):
+            return FileResponse(file_path)
+
+    return JSONResponse({"detail": "Not Found"}, status_code=404)
+
+if os.path.exists("images"):
+    app.mount("/images", StaticFiles(directory="images"), name="images")
+if os.path.exists("layout"):
+    app.mount("/layout", StaticFiles(directory="layout"), name="layout")
+
